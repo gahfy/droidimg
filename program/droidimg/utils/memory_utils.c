@@ -30,8 +30,14 @@ FILE *open_file(char *file_path, char *mode) {
 
 void create_directory_if_not_exists(char *directory) {
     struct stat st = {0};
-    if (stat(directory, &st) == -1)
-        if(mkdir(directory, 0777) != 0) {
+    if (stat(directory, &st) == -1) {
+        int result = -1;
+        #ifdef _WIN32
+            result = mkdir(directory);
+        #else
+            result = mkdir(directory, 0777);
+        #endif
+        if(result != 0) {
             fprintf(
                 stderr,
                 "Failed to create directory %s: %s.\n",
@@ -40,4 +46,5 @@ void create_directory_if_not_exists(char *directory) {
             );
             exit(ERROR_CODE_FILE);
         }
+    }
 }

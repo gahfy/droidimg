@@ -34,9 +34,8 @@ static void parse_input_file(int argc, char *argv[], int *index) {
     if(strcmp(argv[index[0]], "--input") * strcmp(argv[index[0]], "-i") == 0) {
         input_file = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
         copy_string(argv[index[0]+1], input_file);
-        printf("Input file: %s\n", input_file);
+        index[0] += 2;
     }
-    index[0] += 2;
 }
 
 static void parse_output_folder(int argc, char *argv[], int *index) {
@@ -45,8 +44,8 @@ static void parse_output_folder(int argc, char *argv[], int *index) {
     if(strcmp(argv[index[0]], "--output") * strcmp(argv[index[0]], "-o") == 0) {
         output_folder = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
         copy_string(argv[index[0]+1], output_folder);
+        index[0] += 2;
     }
-    index[0] += 2;
 }
 
 static void parse_name(int argc, char *argv[], int *index) {
@@ -55,8 +54,8 @@ static void parse_name(int argc, char *argv[], int *index) {
     if(strcmp(argv[index[0]], "--name") * strcmp(argv[index[0]], "-n") == 0) {
         name = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
         copy_string(argv[index[0]+1], name);
+        index[0] += 2;
     }
-    index[0] += 2;
 }
 
 static void parse_width(int argc, char *argv[], int *index) {
@@ -64,8 +63,8 @@ static void parse_width(int argc, char *argv[], int *index) {
         return;
     if(strcmp(argv[index[0]], "--width") * strcmp(argv[index[0]], "-w") == 0) {
         width = string_to_uint32(argv[index[0]+1]);
+        index[0] += 2;
     }
-    index[0] += 2;
 }
 
 static void parse_height(int argc, char *argv[], int *index) {
