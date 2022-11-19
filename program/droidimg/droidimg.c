@@ -29,7 +29,7 @@ static void usage() {
 }
 
 static void parse_input_file(int argc, char *argv[], int *index) {
-    if(index[0] == argc-1)
+    if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--input") * strcmp(argv[index[0]], "-i") == 0) {
         input_file = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
@@ -40,7 +40,7 @@ static void parse_input_file(int argc, char *argv[], int *index) {
 }
 
 static void parse_output_folder(int argc, char *argv[], int *index) {
-    if(index[0] == argc-1)
+    if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--output") * strcmp(argv[index[0]], "-o") == 0) {
         output_folder = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
@@ -50,7 +50,7 @@ static void parse_output_folder(int argc, char *argv[], int *index) {
 }
 
 static void parse_name(int argc, char *argv[], int *index) {
-    if(index[0] == argc-1)
+    if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--name") * strcmp(argv[index[0]], "-n") == 0) {
         name = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
@@ -60,7 +60,7 @@ static void parse_name(int argc, char *argv[], int *index) {
 }
 
 static void parse_width(int argc, char *argv[], int *index) {
-    if(index[0] == argc-1)
+    if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--width") * strcmp(argv[index[0]], "-w") == 0) {
         width = string_to_uint32(argv[index[0]+1]);
@@ -69,7 +69,7 @@ static void parse_width(int argc, char *argv[], int *index) {
 }
 
 static void parse_height(int argc, char *argv[], int *index) {
-    if(index[0] == argc-1)
+    if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--height") * strcmp(argv[index[0]], "-h") == 0) {
         height = string_to_uint32(argv[index[0]+1]);
@@ -156,9 +156,5 @@ int main(int argc, char *argv[]) {
     free(input_file);
     set_width_and_height(picture_pointer);
     write_android_files(picture_pointer, width, height, output_folder, name);
-    free(output_folder);
-    free(name);
-    free(picture_pointer->argb_pixels);
-    free(picture_pointer);
     return EXIT_SUCCESS;
 }
