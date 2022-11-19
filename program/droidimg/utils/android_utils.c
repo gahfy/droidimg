@@ -38,21 +38,23 @@ static int get_xxxhdpi_size(int mdpi_size) {
 static void write_android_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     char *suffix,
     int width,
     int height
 ) {
-    sprintf(output_file_name, "%sdrawable-%s", output_folder, suffix);
-    create_directory_if_not_exists(output_file_name);
-    sprintf(output_file_name, "%s/%s.webp", output_file_name, name);
+    sprintf(drawable_folder, "%sdrawable-%s", output_folder, suffix);
+    create_directory_if_not_exists(drawable_folder);
+    sprintf(output_file_name, "%s/%s.webp", drawable_folder, name);
     write_to_webp(picture, output_file_name, width, height);
 }
 
 static void write_ldpi_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     uint32_t mdpi_width,
@@ -60,6 +62,7 @@ static void write_ldpi_picture(
 ) {
     write_android_picture(picture,
         output_folder,
+        drawable_folder,
         output_file_name,
         name,
         "ldpi",
@@ -71,6 +74,7 @@ static void write_ldpi_picture(
 static void write_mdpi_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     uint32_t mdpi_width,
@@ -78,6 +82,7 @@ static void write_mdpi_picture(
 ) {
     write_android_picture(picture,
         output_folder,
+        drawable_folder,
         output_file_name,
         name,
         "mdpi",
@@ -89,6 +94,7 @@ static void write_mdpi_picture(
 static void write_hdpi_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     uint32_t mdpi_width,
@@ -96,6 +102,7 @@ static void write_hdpi_picture(
 ) {
     write_android_picture(picture,
         output_folder,
+        drawable_folder,
         output_file_name,
         name,
         "hdpi",
@@ -107,6 +114,7 @@ static void write_hdpi_picture(
 static void write_xhdpi_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     uint32_t mdpi_width,
@@ -114,6 +122,7 @@ static void write_xhdpi_picture(
 ) {
     write_android_picture(picture,
         output_folder,
+        drawable_folder,
         output_file_name,
         name,
         "xhdpi",
@@ -125,6 +134,7 @@ static void write_xhdpi_picture(
 static void write_xxhdpi_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     uint32_t mdpi_width,
@@ -132,6 +142,7 @@ static void write_xxhdpi_picture(
 ) {
     write_android_picture(picture,
         output_folder,
+        drawable_folder,
         output_file_name,
         name,
         "xxhdpi",
@@ -143,6 +154,7 @@ static void write_xxhdpi_picture(
 static void write_xxxhdpi_picture(
     picture *picture,
     char *output_folder,
+    char *drawable_folder,
     char *output_file_name,
     char *name,
     uint32_t mdpi_width,
@@ -150,6 +162,7 @@ static void write_xxxhdpi_picture(
 ) {
     write_android_picture(picture,
         output_folder,
+        drawable_folder,
         output_file_name,
         name,
         "xxxhdpi",
@@ -171,13 +184,14 @@ void write_android_files(
     char *name
 ) {
     char *output_file_name = initialize_output_file_name(output_folder, name);
+    char *drawable_folder = initialize_output_file_name(output_folder, name);
     write_ldpi_picture(
-        picture, output_folder, output_file_name, name, width, height
+        picture, output_folder, drawable_folder, output_file_name, name, width, height
     );
-    write_mdpi_picture(picture, output_folder, output_file_name, name, width, height);
-    write_hdpi_picture(picture, output_folder, output_file_name, name, width, height);
-    write_xhdpi_picture(picture, output_folder, output_file_name, name, width, height);
-    write_xxhdpi_picture(picture, output_folder, output_file_name, name, width, height);
-    write_xxxhdpi_picture(picture, output_folder, output_file_name, name, width, height);
+    write_mdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    write_hdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    write_xhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    write_xxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    write_xxxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     free(output_file_name);
 }
