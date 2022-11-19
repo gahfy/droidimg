@@ -1,6 +1,8 @@
 #ifndef UTILS_STRING_UTILS_H
 #define UTILS_STRING_UTILS_H
 
+#include <stdint.h>
+
 uint32_t string_to_uint32(char *string);
 void copy_string(char *to_copy, char *receiver);
 char get_last_character(char *char_pointer);
