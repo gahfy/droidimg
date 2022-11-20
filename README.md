@@ -89,6 +89,3 @@ That's all folks. Your program can now be run in Windows, you can find them in:
 * `C:\cygwin64\home\username\droidimg\program\droidimg\i686` for the 32 bits version
 
 Feel free to rename and move those folder wherever you want, **but keep the dll present in that folder when you move it**.
-
-## Use droidimg
-
