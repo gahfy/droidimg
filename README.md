@@ -39,6 +39,18 @@ destination.greatmodule : /Users/myname/work/AppName/greatmodule/src/main/res
 destination.mysecondapp : /Users/myname/work/SecondAppName/appmodule/src/main/res
 ```
 
+or (for Windows) :
+
+```
+destination.myapp : C:/Users/myname/work/AppName/appmodule/src/main/res
+destination.greatmodule : C:\Users\myname\work\AppName\greatmodule\src\main\res
+destination.mysecondapp : C:\Users\myname/work/SecondAppName/appmodule/src/main/res
+```
+
+_As you can see, you can mix solidus and reverse solidus as much as you want. This is true only for Windows_
+
+**At the beginning of the line, and between name of destination and PATH, you can have as many spaces and tabs as you want. For path name, it should end directly with a new line, otherwise spaces will be considered as part of the folder name.**
+
 Then, running the command like `droidimg -d greatmodule` would have the same effect as running it with `droidimg -o /Users/myname/work/AppName/greatmodule/src/main/res`.
 
 VERY IMPORTANT : The paths in this file must be absolute path, without any environment variable, or `~`.
