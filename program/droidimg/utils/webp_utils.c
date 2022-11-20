@@ -6,6 +6,15 @@
 #include "picture_utils.h"
 #include "memory_utils.h"
 
+static int write_picture_to_file(
+    const uint8_t* data,
+    size_t data_size,
+    const WebPPicture* picture
+) {
+    FILE *file_pointer = picture->custom_ptr;
+    return fwrite(data, 1, data_size, file_pointer) == data_size;
+}
+
 static void validate_webp_config(
     WebPConfig *config
 ) {
@@ -41,7 +50,7 @@ static void allocate_webp_picture(WebPPicture *webp_picture_pointer) {
 
 static void init_webp_picture(
     WebPPicture *webp_picture_pointer,
-    WebPMemoryWriter *writer_pointer,
+    FILE *file_pointer,
     uint32_t width,
     uint32_t height
 ) {
@@ -50,20 +59,19 @@ static void init_webp_picture(
     webp_picture_pointer->width = width;
     webp_picture_pointer->height = height;
     allocate_webp_picture(webp_picture_pointer);
-    webp_picture_pointer->writer = WebPMemoryWrite;
-    webp_picture_pointer->custom_ptr = writer_pointer;
+    webp_picture_pointer->writer = write_picture_to_file;
+    webp_picture_pointer->custom_ptr = file_pointer;
 }
 
 static void init_webp_structures(
     WebPConfig *config_pointer,
-    WebPMemoryWriter *writer_pointer,
     WebPPicture *webp_picture_pointer,
+    FILE *file_pointer,
     uint32_t width,
     uint32_t height
 ) {
     init_webp_config(config_pointer);
-    WebPMemoryWriterInit(writer_pointer);
-    init_webp_picture(webp_picture_pointer, writer_pointer, width, height);
+    init_webp_picture(webp_picture_pointer, file_pointer, width, height);
 }
 
 static void write_pixels_to_webp_picture(
@@ -83,19 +91,14 @@ static void write_pixels_to_webp_picture(
 }
 
 static void write_webp_picture_to_file(
-    char *file_path,
     WebPConfig *config_pointer,
-    WebPMemoryWriter *writer_pointer,
     WebPPicture *webp_picture_pointer
 ) {
-    FILE *file_pointer = open_file(file_path, "wb");
     int ok = WebPEncode(config_pointer, webp_picture_pointer);
     if (!ok) {
         fprintf(stderr, ERROR_MESSAGE_WEBP_ENCODING);
         exit(ERROR_CODE_WEBP_ENCODING);
     }
-    fwrite(writer_pointer->mem, 1, writer_pointer->size, file_pointer);
-    fclose(file_pointer);
 }
 
 void write_to_webp(
@@ -105,11 +108,12 @@ void write_to_webp(
     uint32_t height
 ) {
     WebPConfig config;
-    WebPMemoryWriter writer;
     WebPPicture webp_picture;
-    init_webp_structures(&config, &writer, &webp_picture, width, height);
+    WebPMemoryWriter writer;
+    FILE *file_pointer = open_file(file_path, "wb");
+    init_webp_structures(&config, &webp_picture, file_pointer, width, height);
     write_pixels_to_webp_picture(&webp_picture, picture_pointer, width, height);
-    write_webp_picture_to_file(file_path, &config, &writer, &webp_picture);
-    WebPMemoryWriterClear(&writer);
+    write_webp_picture_to_file(&config, &webp_picture);
+    fclose(file_pointer);
     WebPPictureFree(&webp_picture);
 }
