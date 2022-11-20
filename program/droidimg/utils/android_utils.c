@@ -185,13 +185,25 @@ void write_android_files(
 ) {
     char *output_file_name = initialize_output_file_name(output_folder, name);
     char *drawable_folder = initialize_output_file_name(output_folder, name);
+    printf("Converting LDPI picture: ");
     write_ldpi_picture(
         picture, output_folder, drawable_folder, output_file_name, name, width, height
     );
+    printf("Done.\n");
+    printf("Converting MDPI picture: ");
     write_mdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    printf("Done.\n");
+    printf("Converting HDPI picture: ");
     write_hdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    printf("Done.\n");
+    printf("Converting XHDPI picture: ");
     write_xhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    printf("Done.\n");
+    printf("Converting XXHDPI picture: ");
     write_xxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    printf("Done.\n");
+    printf("Converting XXXHDPI picture: ");
     write_xxxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
+    printf("Done.\n");
     free(output_file_name);
 }
