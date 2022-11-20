@@ -110,6 +110,8 @@ Go to the [Downloads repository](https://storage.googleapis.com/downloads.webmpr
 
 Open a cygwin terminal, and clone the repository wherever you want. Then, go to `program/droidimg`.
 
+Then run `sed -i 's/\r$//g' compile-cygwin-x86_64.sh` and `sed -i 's/\r$//g' compile-cygwin-i686.sh`.
+
 Now, run `compile-cygwin-x86_64.sh` or `compile-cygwin-i686.sh` in order to compile for `64bits` or `32bits`.
 
 That's all folks. Your program can now be run in Windows, you can find them in:
