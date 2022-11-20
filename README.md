@@ -1,8 +1,26 @@
 # DroidImg
 
-## Introduction
+## What is this program about
 
-First of all, I'm a C beginner, so things may not be ideal everywhere, but at least it works.
+This program is in two parts, a binary, and an Android Studio plugin, in order to improve rasterized image management for Android.
+
+### Usage
+
+The program is used with the following arguments :
+
+* `-i` or `--input-file` : **MANDATORY** The PNG input file
+* `-o` or `--output-folder` : _Optional_ The output folder to which to add the `webp` images. If skipped, the current directory will be used
+* `-n` or `--name` : _Optional_ The name of the images to create. If skipped, the name of the input image will be used.
+* `-w` or `--width` : _Optional_ The width, in dp, of the image to create. If both this and height are skipped, we will use the size of the original image as `xxxhdpi` size. If skipped but height is set, the value that respects the proportions of the image will be used.
+* `-h` or `--height` : _Optional_ The height, in dp, of the image to create. If skipped, behavior is same as `width` parameter.
+
+Just an exemple :
+
+```
+droidimg -i my_image.png -o path/to/module/src/main/resources -n nice_drawable -w 100
+```
+
+This command will take `my_image.png`, and save `webp` files into `path/to/module/src/main/resources` drawable folders (from `ldpi` to `xxxhdpi`), setting the name of the drawable to `nice_drawable` and its width to `100dp`. It will set the height so the proportions of the original image are preserved.
 
 ## Compile
 
@@ -70,10 +88,3 @@ Feel free to rename and move those folder wherever you want, **but keep the dll 
 
 ## Use droidimg
 
-Arguments:
-
-* `-i` or `--input-file` : **MANDATORY** The PNG input file
-* `-o` or `--output-folder` : _Optional_ The output folder to which to add the `webp` images. If skipped, the current directory will be used
-* `-n` or `--name` : _Optional_ The name of the images to create. If skipped, the name of the input image will be used.
-* `-w` or `--width` : _Optional_ The width, in dp, of the image to create. If both this and height are skipped, we will use the size of the original image as `xxxhdpi` size. If skipped but height is set, the value that respects the proportions of the image will be used.
-* `-h` or `--height` : _Optional_ The height, in dp, of the image to create. If skipped, behavior is same as `width` parameter.
