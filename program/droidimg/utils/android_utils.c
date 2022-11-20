@@ -173,7 +173,7 @@ static void write_xxxhdpi_picture(
 
 char *initialize_output_file_name(char *output_folder, char *name) {
     int output_file_max_length = get_string_length(output_folder);
-    output_file_max_length += 16 + get_string_length(name) + 6;
+    output_file_max_length += 17 + get_string_length(name) + 6;
     size_t output_file_name_size = sizeof(char) * output_file_max_length;
     char *output_file_name = allocate(output_file_name_size);
     return output_file_name;
