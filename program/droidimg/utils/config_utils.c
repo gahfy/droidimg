@@ -96,7 +96,10 @@ void set_destination(char *destination_name, char* folder) {
     while(fgets(current, sizeof(char) * 2, file_pointer) != NULL && !is_finished) {
         parse_current_char(current[0], &status, &index, &destination_index, &is_still_good, &is_finished, folder, destination_name);
     }
+    free(current);
     if(folder != NULL && folder[destination_index-1] != 0x00) {
         folder[destination_index] = 0x00;
     }
+    fclose(file_pointer);
+    free(user_config_file_path);
 }

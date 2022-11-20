@@ -113,14 +113,21 @@ static void parse_arguments(int argc, char *argv[]) {
 
 static void set_output_folder_from_destination() {
     if(destination == NULL) {
-        output_folder = "./";
+        output_folder = allocate(3 * sizeof(char));
+        output_folder[0] = '.';
+        output_folder[1] = '/';
+        output_folder[2] = 0x00;
     } else {
         // Allocate the max length of a folder
         output_folder = allocate(sizeof(char) * 4097);
         set_destination(destination, output_folder);
         if(output_folder[0] == 0x00) {
-            output_folder = "./";
+            output_folder = allocate(3 * sizeof(char));
+            output_folder[0] = '.';
+            output_folder[1] = '/';
+            output_folder[2] = 0x00;
         }
+        free(destination);
     }
 }
 
@@ -139,19 +146,21 @@ static void set_output_folder_value() {
 }
 
 static void set_name_from_input_file() {
-    int start_index = get_last_index(input_file, '/', 0);
-    #ifdef _WIN32
+    if(name == NULL) {
+        int start_index = get_last_index(input_file, '/', 0);
+#ifdef _WIN32
         if(start_index == -1)
             get_last_index(input_file, '\\', 0);
-    #endif
-    start_index = start_index == -1 ? 0 : start_index+1;
-    int end_index = get_last_index(input_file, '.', start_index);
-    if(end_index == -1)
-        end_index = get_string_length(input_file) - 1;
+#endif
+        start_index = start_index == -1 ? 0 : start_index + 1;
+        int end_index = get_last_index(input_file, '.', start_index);
+        if (end_index == -1)
+            end_index = get_string_length(input_file) - 1;
 
-    int length = end_index - start_index;
-    name = allocate(sizeof(char) * (length+1));
-    copy_partial_string(input_file, start_index, length, name);
+        int length = end_index - start_index;
+        name = allocate(sizeof(char) * (length + 1));
+        copy_partial_string(input_file, start_index, length, name);
+    }
 }
 
 static void set_width_and_height(picture *picture) {
@@ -204,5 +213,6 @@ int main(int argc, char *argv[]) {
     free(name);
     free(picture_pointer->argb_pixels);
     free(picture_pointer);
+    free(output_folder);
     return EXIT_SUCCESS;
 }
