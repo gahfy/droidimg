@@ -21,11 +21,10 @@
 static char *input_file = NULL;
 static char *output_folder = NULL;
 static char *name = NULL;
-static uint32_t width = 0;
-static uint32_t height = 0;
+static uint32_t width = UINT32_MAX;
+static uint32_t height = UINT32_MAX;
 
-static void usage(char *program_name) {
-    uint32_t length = get_string_length(program_name);
+static void usage() {
     printf("usage: droidimg -i|--input <input_png_file>\n");
     printf("                [-o|--output <output_resource_folder>] ");
     printf("[-n|--name <file_name>]\n");
@@ -91,7 +90,7 @@ static void parse_arguments(int argc, char *argv[]) {
         parse_width(argc, argv, &index);
         parse_height(argc, argv, &index);
         if(index == previous_index) {
-            usage(argv[0]);
+            usage();
             exit(ERROR_CODE_ARGUMENTS);
         }
         previous_index = index;
@@ -130,23 +129,37 @@ static void set_name_from_input_file() {
 }
 
 static void set_width_and_height(picture *picture) {
-    if(width == 0 || height == 0) {
-        if(width == 0 && height == 0) {
+    if(width == UINT32_MAX || height == UINT32_MAX) {
+        if(width == UINT32_MAX && height == UINT32_MAX) {
             width = picture->width / 4;
             height = picture->height / 4;
-        } else if(width == 0) {
-            width = picture->width * height / picture->height;
-        } else if(height == 0) {
-            height = picture->height * width / picture->width;
+        } else if(width == UINT32_MAX) {
+            uint64_t result = ((uint64_t) picture->width) * (uint64_t) height;
+            result /= (uint64_t) picture->height;
+            if(result > UINT32_MAX / 4) {
+                fprintf(stderr, ERROR_MESSAGE_ARGUMENTS);
+                exit(ERROR_CODE_ARGUMENTS);
+            }
+            width = (uint32_t) result;
+        } else if(height == UINT32_MAX) {
+            uint64_t result = ((uint64_t) picture->height) * (uint64_t) width;
+            result /= (uint64_t) picture->width;
+            if(result > UINT32_MAX / 4) {
+                fprintf(stderr, ERROR_MESSAGE_ARGUMENTS);
+                exit(ERROR_CODE_ARGUMENTS);
+            }
+            height = (uint32_t) result;;
         }
     }
 }
 
 static void validate_arguments() {
+    // If width or height is higher than max / 4, then we won't be able to
+    // generate xxxhdpi (which is the size * 4)
     if(
         input_file == NULL ||
-        width == -1 ||
-        height == -1
+        (width != UINT32_MAX && width > UINT32_MAX / 4) ||
+        (height != UINT32_MAX && height > UINT32_MAX / 4)
     ) {
         fprintf(stderr, ERROR_MESSAGE_ARGUMENTS);
         exit(ERROR_CODE_ARGUMENTS);

@@ -6,32 +6,32 @@
 #include "webp_utils.h"
 #include "memory_utils.h"
 
-static int get_ldpi_size(int mdpi_size) {
-    int size = mdpi_size * 3 / 4;
+static uint32_t get_ldpi_size(uint32_t mdpi_size) {
+    uint32_t size = mdpi_size * 3 / 4;
     return size == 0 ? 1 : size;
 }
 
-static int get_mdpi_size(int mdpi_size) {
+static uint32_t get_mdpi_size(uint32_t mdpi_size) {
     return mdpi_size == 0 ? 1 : mdpi_size;
 }
 
-static int get_hdpi_size(int mdpi_size) {
-    int size = mdpi_size * 3 / 2;
+static uint32_t get_hdpi_size(uint32_t mdpi_size) {
+    uint32_t size = mdpi_size * 3 / 2;
     return size == 0 ? 1 : size;
 }
 
-static int get_xhdpi_size(int mdpi_size) {
-    int size = mdpi_size * 2;
+static uint32_t get_xhdpi_size(uint32_t mdpi_size) {
+    uint32_t size = mdpi_size * 2;
     return size == 0 ? 1 : size;
 }
 
-static int get_xxhdpi_size(int mdpi_size) {
-    int size = mdpi_size * 3;
+static uint32_t get_xxhdpi_size(uint32_t mdpi_size) {
+    uint32_t size = mdpi_size * 3;
     return size == 0 ? 1 : size;
 }
 
-static int get_xxxhdpi_size(int mdpi_size) {
-    int size = mdpi_size * 4;
+static uint32_t get_xxxhdpi_size(uint32_t mdpi_size) {
+    uint32_t size = mdpi_size * 4;
     return size == 0 ? 1 : size;
 }
 
@@ -42,8 +42,8 @@ static void write_android_picture(
     char *output_file_name,
     char *name,
     char *suffix,
-    int width,
-    int height
+    uint32_t width,
+    uint32_t height
 ) {
     sprintf(drawable_folder, "%sdrawable-%s", output_folder, suffix);
     create_directory_if_not_exists(drawable_folder);
@@ -186,23 +186,29 @@ void write_android_files(
     char *output_file_name = initialize_output_file_name(output_folder, name);
     char *drawable_folder = initialize_output_file_name(output_folder, name);
     printf("Converting LDPI picture: ");
+    fflush(stdout);
     write_ldpi_picture(
         picture, output_folder, drawable_folder, output_file_name, name, width, height
     );
     printf("Done.\n");
     printf("Converting MDPI picture: ");
+    fflush(stdout);
     write_mdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     printf("Done.\n");
     printf("Converting HDPI picture: ");
+    fflush(stdout);
     write_hdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     printf("Done.\n");
     printf("Converting XHDPI picture: ");
+    fflush(stdout);
     write_xhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     printf("Done.\n");
     printf("Converting XXHDPI picture: ");
+    fflush(stdout);
     write_xxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     printf("Done.\n");
     printf("Converting XXXHDPI picture: ");
+    fflush(stdout);
     write_xxxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     printf("Done.\n");
     free(output_file_name);
