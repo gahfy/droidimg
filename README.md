@@ -4,6 +4,10 @@
 
 This program is in two parts, a binary, and an Android Studio plugin, in order to improve rasterized image management for Android.
 
+For now, only the program is available, the Android Studio plugin will be developed later.
+
+**_PLEASE CONSIDER THIS AS A PRE_ALPHA VERSION, OR WHATEVER YOU WANT TO CALL THE LEAST STABLE VERSION_**
+
 ### Usage
 
 The program is used with the following arguments :
