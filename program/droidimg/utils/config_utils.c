@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
+#ifndef _WIN32
 #include <pwd.h>
+#endif
 #include "string_utils.h"
 #include "memory_utils.h"
 
@@ -22,8 +24,7 @@ static void parse_current_char(
     char *folder,
     char *destination
 ) {
-    // If it's a new line
-    if(current == 0x0A || current == 0x0C || current == 0x0D) {
+    if(current == '\r' || current == '\n') {
         if(destination_index[0] != 0) {
             is_finished[0] = true;
         } else {
@@ -33,7 +34,7 @@ static void parse_current_char(
         }
     } else if(is_still_good[0]) {
         if(status[0] == 0) {
-            if(current != 0x09 && current != 0x20) {
+            if(current != '\t' && current != ' ') {
                 status[0] = 1;
             }
         }
@@ -53,11 +54,11 @@ static void parse_current_char(
             // If it's a tab, a space or :
             if(current == 0x09 || current == 0x20) {
                 //Simply ignore it
-            } else if(current == 0x3A) {
+            } else if(current == ':') {
                 status[0] = 3;
             }
         } else if(status[0] == 3) {
-            if(current == 0x09 || current == 0x20) {
+            if(current == '\t' || current == ' ') {
                 //Simply ignore it
             } else {
                 status[0] = 4;
@@ -74,9 +75,15 @@ static void parse_current_char(
 }
 
 void set_destination(char *destination_name, char* folder) {
+#ifdef _WIN32
+    char *user_config_file_path = allocate(sizeof(char) * (get_string_length(getenv("USERPROFILE")) + 18));
+    sprintf(user_config_file_path, "%s/.droidimg.config", getenv("USERPROFILE"));
+#else
     struct passwd *pw = getpwuid(getuid());
     char *user_config_file_path = allocate(sizeof(char) * (get_string_length(pw->pw_dir) + 18));
     sprintf(user_config_file_path, "%s/.droidimg.config", pw->pw_dir);
+    free(pw);
+#endif
     FILE *file_pointer = fopen(user_config_file_path, "rt");
     if(file_pointer == NULL) {
         fprintf(stderr, "Failed open config file. Ignoring destination argument.\n");
@@ -96,7 +103,7 @@ void set_destination(char *destination_name, char* folder) {
     while(fgets(current, sizeof(char) * 2, file_pointer) != NULL && !is_finished) {
         parse_current_char(current[0], &status, &index, &destination_index, &is_still_good, &is_finished, folder, destination_name);
     }
-    free(current);
+    //free(current);
     if(folder != NULL && folder[destination_index-1] != 0x00) {
         folder[destination_index] = 0x00;
     }
