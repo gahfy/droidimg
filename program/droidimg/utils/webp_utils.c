@@ -110,5 +110,6 @@ void write_to_webp(
     init_webp_structures(&config, &writer, &webp_picture, width, height);
     write_pixels_to_webp_picture(&webp_picture, picture_pointer, width, height);
     write_webp_picture_to_file(file_path, &config, &writer, &webp_picture);
+    WebPMemoryWriterClear(&writer);
     WebPPictureFree(&webp_picture);
 }

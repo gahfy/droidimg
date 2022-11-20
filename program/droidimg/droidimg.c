@@ -155,5 +155,8 @@ int main(int argc, char *argv[]) {
     free(input_file);
     set_width_and_height(picture_pointer);
     write_android_files(picture_pointer, width, height, output_folder, name);
+    free(name);
+    free(picture_pointer->argb_pixels);
+    free(picture_pointer);
     return EXIT_SUCCESS;
 }

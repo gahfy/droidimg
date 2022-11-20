@@ -206,4 +206,5 @@ void write_android_files(
     write_xxxhdpi_picture(picture, output_folder, drawable_folder, output_file_name, name, width, height);
     printf("Done.\n");
     free(output_file_name);
+    free(drawable_folder);
 }
