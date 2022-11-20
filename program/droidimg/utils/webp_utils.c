@@ -109,7 +109,6 @@ void write_to_webp(
 ) {
     WebPConfig config;
     WebPPicture webp_picture;
-    WebPMemoryWriter writer;
     FILE *file_pointer = open_file(file_path, "wb");
     init_webp_structures(&config, &webp_picture, file_pointer, width, height);
     write_pixels_to_webp_picture(&webp_picture, picture_pointer, width, height);
