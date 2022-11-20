@@ -48,7 +48,7 @@ Set their home directory to environment variables `LIBPNG_HOME` and `LIBWEBP_HOM
 
 **YOU HAVE TO SET THEM, set them to `/usr` if you used apt or to `/usr/local` if you used homebrew.**
 
-Then run `program/droidimg/compile.sh`
+Then run `cd program/droidimg && ./compile.sh` (it is important for now that you are in the folder for compiling)
 
 ### Windows
 
