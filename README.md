@@ -8,7 +8,11 @@ For now, only the program is available, the Android Studio plugin will be develo
 
 **_PLEASE CONSIDER THIS AS A PRE_ALPHA VERSION, OR WHATEVER YOU WANT TO CALL THE LEAST STABLE VERSION_**
 
-### Usage
+## Licence
+
+I will use a proper licence when I will get time for it. For now, consider you can do whatever your imagination can think about with this code and that there is no warranty in any form.
+
+## Usage
 
 The program is used with the following arguments :
 
