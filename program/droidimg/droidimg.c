@@ -24,8 +24,13 @@ static char *name = NULL;
 static uint32_t width = 0;
 static uint32_t height = 0;
 
-static void usage() {
-    printf("Usage\n");
+static void usage(char *program_name) {
+    uint32_t length = get_string_length(program_name);
+    printf("usage: droidimg -i|--input <input_png_file>\n");
+    printf("                [-o|--output <output_resource_folder>] ");
+    printf("[-n|--name <file_name>]\n");
+    printf("                [-w|--with width_in_dp] ");
+    printf("[-h|--height height_in_dp]\n");
 }
 
 static void parse_input_file(int argc, char *argv[], int *index) {
@@ -72,8 +77,8 @@ static void parse_height(int argc, char *argv[], int *index) {
         return;
     if(strcmp(argv[index[0]], "--height") * strcmp(argv[index[0]], "-h") == 0) {
         height = string_to_uint32(argv[index[0]+1]);
+        index[0] += 2;
     }
-    index[0] += 2;
 }
 
 static void parse_arguments(int argc, char *argv[]) {
@@ -85,8 +90,10 @@ static void parse_arguments(int argc, char *argv[]) {
         parse_name(argc, argv, &index);
         parse_width(argc, argv, &index);
         parse_height(argc, argv, &index);
-        if(index == previous_index)
-            usage();
+        if(index == previous_index) {
+            usage(argv[0]);
+            exit(ERROR_CODE_ARGUMENTS);
+        }
         previous_index = index;
     }
 }
