@@ -17,6 +17,7 @@ The program is used with the following arguments :
 * `-n` or `--name` : _Optional_ The name of the images to create. If skipped, the name of the input image will be used.
 * `-w` or `--width` : _Optional_ The width, in dp, of the image to create. If both this and height are skipped, we will use the size of the original image as `xxxhdpi` size. If skipped but height is set, the value that respects the proportions of the image will be used.
 * `-h` or `--height` : _Optional_ The height, in dp, of the image to create. If skipped, behavior is same as `width` parameter.
+* `-d` or `--destination` : _Optional_ The destination retrieved from config file (see below). Ignored if `-o` or `--output` is set.
 
 Just an exemple :
 
@@ -25,6 +26,22 @@ droidimg -i my_image.png -o path/to/module/src/main/resources -n nice_drawable -
 ```
 
 This command will take `my_image.png`, and save `webp` files into `path/to/module/src/main/resources` drawable folders (from `ldpi` to `xxxhdpi`), setting the name of the drawable to `nice_drawable` and its width to `100dp`. It will set the height so the proportions of the original image are preserved.
+
+### Destinations
+
+In order to avoid writing very long path everytime you use the app, you can set destinations.
+
+To do so, all you have to do is to write a file named `.droidimg.config` in the root of your `$HOME` directory, with destinations written like this:
+
+```
+destination.myapp : /Users/myname/work/AppName/appmodule/src/main/res
+destination.greatmodule : /Users/myname/work/AppName/greatmodule/src/main/res
+destination.mysecondapp : /Users/myname/work/SecondAppName/appmodule/src/main/res
+```
+
+Then, running the command like `droidimg -d greatmodule` would have the same effect as running it with `droidimg -o /Users/myname/work/AppName/greatmodule/src/main/res`.
+
+VERY IMPORTANT : The paths in this file must be absolute path, without any environment variable, or `~`.
 
 ## Compile
 

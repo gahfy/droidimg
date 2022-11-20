@@ -17,9 +17,11 @@
 #include "utils/webp_utils.h"
 #include "utils/constants.h"
 #include "utils/android_utils.h"
+#include "utils/config_utils.h"
 
 static char *input_file = NULL;
 static char *output_folder = NULL;
+static char *destination = NULL;
 static char *name = NULL;
 static uint32_t width = UINT32_MAX;
 static uint32_t height = UINT32_MAX;
@@ -28,8 +30,9 @@ static void usage() {
     printf("usage: droidimg -i|--input <input_png_file>\n");
     printf("                [-o|--output <output_resource_folder>] ");
     printf("[-n|--name <file_name>]\n");
-    printf("                [-w|--with width_in_dp] ");
-    printf("[-h|--height height_in_dp]\n");
+    printf("                [-w|--with <width_in_dp>] ");
+    printf("[-h|--height <height_in_dp>]\n");
+    printf("                [-d|--destination <destination_from_config>] ");
 }
 
 static void parse_input_file(int argc, char *argv[], int *index) {
@@ -80,6 +83,16 @@ static void parse_height(int argc, char *argv[], int *index) {
     }
 }
 
+static void parse_destination(int argc, char *argv[], int *index) {
+    if(index[0] >= argc-1)
+        return;
+    if(strcmp(argv[index[0]], "--destination") * strcmp(argv[index[0]], "-d") == 0) {
+        destination = allocate(sizeof(char) * (get_string_length(argv[index[0]+1]) + 1));
+        copy_string(argv[index[0]+1], destination);
+        index[0] += 2;
+    }
+}
+
 static void parse_arguments(int argc, char *argv[]) {
     int index = 1;
     int previous_index = 1;
@@ -89,6 +102,7 @@ static void parse_arguments(int argc, char *argv[]) {
         parse_name(argc, argv, &index);
         parse_width(argc, argv, &index);
         parse_height(argc, argv, &index);
+        parse_destination(argc, argv, &index);
         if(index == previous_index) {
             usage();
             exit(ERROR_CODE_ARGUMENTS);
@@ -97,18 +111,30 @@ static void parse_arguments(int argc, char *argv[]) {
     }
 }
 
-static void set_output_folder_value() {
-    if(output_folder == NULL) {
+static void set_output_folder_from_destination() {
+    if(destination == NULL) {
         output_folder = "./";
     } else {
-        if(   get_last_character(output_folder) != '/'
-           && get_last_character(output_folder) != '\\') {
-            char *char_to_add = "/";
-            #ifdef _WIN32
-                char_to_add = "\\";
-            #endif
-            add_suffix_string(output_folder, char_to_add);
+        // Allocate the max length of a folder
+        output_folder = allocate(sizeof(char) * 4097);
+        set_destination(destination, output_folder);
+        if(output_folder[0] == 0x00) {
+            output_folder = "./";
         }
+    }
+}
+
+static void set_output_folder_value() {
+    if(output_folder == NULL) {
+        set_output_folder_from_destination();
+    }
+    if(   get_last_character(output_folder) != '/'
+        && get_last_character(output_folder) != '\\') {
+        char *char_to_add = "/";
+        #ifdef _WIN32
+            char_to_add = "\\";
+        #endif
+        add_suffix_string(output_folder, char_to_add);
     }
 }
 
