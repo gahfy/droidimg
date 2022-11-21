@@ -79,6 +79,22 @@ apt-get install libpng-dev libwebp-dev
 brew install libpng libwebp
 ```
 
+#### Download and extract archive
+
+Download `droidimg-0.01.tar.gz` from the [release](https://github.com/gahfy/droidimg/releases/tag/v0.01)
+
+Extract it with the following command:
+
+```
+tar -xzf droidimg-0.01.tar.gz
+```
+
+Then move inside the folder:
+
+```
+cd droidimg-0.01
+```
+
 #### Configuring
 
 Then, run configure script with:
