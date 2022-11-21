@@ -104,7 +104,12 @@ To compile the application.
 Then run
 
 ```
-make install
+make
 ```
 
 To install the application. You may have to run `sudo make` regarding your permissions.
+
+### Windows
+
+Binaries have been provided for windows.
+Download the zip and extract it wherever you want.

@@ -13,11 +13,6 @@ AC_ARG_WITH([webp-dir],
         [WEBP_INSTALL_DIR=$withval],
         [])
 
-dnl ============ Adding default dirs for include and library
-
-LIBS="$LIBS -L/usr/local/lib -L/usr/lib"
-CFLAGS="$CFLAGS -I/usr/local/include -I/usr/include"
-
 dnl ============ Checking for library arguments
 
 AS_IF([test "x$PNG_INSTALL_DIR" = "x"], , [
