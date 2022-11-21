@@ -1,0 +1,2 @@
+bin_PROGRAMS = droidimg
+droidimg_SOURCES = utils/android_utils.c utils/android_utils.h utils/binary_utils.c utils/binary_utils.h utils/config_utils.c utils/config_utils.h utils/constants.h utils/memory_utils.c utils/memory_utils.h utils/picture_utils.c utils/picture_utils.h utils/png_utils.c utils/png_utils.h utils/string_utils.c utils/string_utils.h utils/webp_utils.c utils/webp_utils.h droidimg.c

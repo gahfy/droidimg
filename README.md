@@ -59,9 +59,11 @@ Then, running the command like `droidimg -d greatmodule` would have the same eff
 
 VERY IMPORTANT : The paths in this file must be absolute path, without any environment variable, or `~`.
 
-## Compile
+## Installation
 
 ### Linux and macOS
+
+#### Installation of dependencies
 
 You need [Libpng](http://www.libpng.org/pub/png/libpng.html) and [Libwebp](https://developers.google.com/speed/webp/download) to be able to compile this program.
 
@@ -77,50 +79,32 @@ apt-get install libpng-dev libwebp-dev
 brew install libpng libwebp
 ```
 
-Set their home directory to environment variables `LIBPNG_HOME` and `LIBWEBP_HOME`.
+#### Configuring
 
-**YOU HAVE TO SET THEM, set them to `/usr` if you used apt or to `/usr/local` if you used homebrew.**
+Then, run configure script with:
 
-Then run `cd program/droidimg && ./compile.sh` (it is important for now that you are in the folder for compiling)
+```
+./configure
+```
 
-### Windows
+You may want to set `--with-png-dir` and `--with-webp-dir` if you set custom installation directories for those libraries.
 
-Here are the steps to compile droidimg on Windows.
+#### Compiling
 
-_As I said, I'm a beginner in C, and didn't work with Windows since decades. If you know how to compile without the need to keep the dlls, or if you know a better/easier way to compile, feel free to share_
+Then run
 
-#### Cygwin, MinGW-w64 and libpng
+```
+make
+```
 
-You will need [Cygwin](https://cygwin.com/).
+To compile the application.
 
-Install the following packages in Cygwin:
+#### Installing
 
-* `mingw64-i686-gcc-core` in order to compile a 32 bits executable
-* `mingw64-x86_64-gcc-core` in order to compile a 64 bits executable
-* `mingw64-i686-libpng` in order to compile a 32 bits executable
-* `mingw64-x86_64-libpng` in order to compile a 64 bits executable
+Then run
 
-_Unfortunately, `libwebp` in MinGW-W64 is too old, so we will download it ourselves_
+```
+make install
+```
 
-#### Libwebp
-
-Go to the [Downloads repository](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html) of WebP.
-
-* Download `libwebp-1.0.3-windows-x86-no-wic.zip` in order to compile a 32 bits executable
-* Create a folder `C:\cygwin64\temp` and extract libwebp inside in a folder named `libwebp` _(So that in `C:\cygwin64\temp\libwebp` you have folders named `bin`, `include`, `lib`, ...)_
-* Download `libwebp-1.2.4-windows-x64-no-wic.zip` and extract it in a folder named `libwebp64` in `C:\cygwin64\temp` _(So that in `C:\cygwin64\temp\libwebp64` you have folders named `bin`, `include`, `lib`, ...)_
-
-#### Cygwin terminal
-
-Open a cygwin terminal, and clone the repository wherever you want. Then, go to `program/droidimg`.
-
-Then run `sed -i 's/\r$//g' compile-cygwin-x86_64.sh` and `sed -i 's/\r$//g' compile-cygwin-i686.sh`.
-
-Now, run `compile-cygwin-x86_64.sh` or `compile-cygwin-i686.sh` in order to compile for `64bits` or `32bits`.
-
-That's all folks. Your program can now be run in Windows, you can find them in:
-
-* `C:\cygwin64\home\username\droidimg\program\droidimg\x86_64` for the 64 bits version
-* `C:\cygwin64\home\username\droidimg\program\droidimg\i686` for the 32 bits version
-
-Feel free to rename and move those folder wherever you want, **but keep the dll present in that folder when you move it**.
+To install the application. You may have to run `sudo make` regarding your permissions.
