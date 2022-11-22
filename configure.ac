@@ -28,13 +28,13 @@ AS_IF([test "x$WEBP_INSTALL_DIR" = "x"], , [
 dnl ============ Checking for library presence (header and function)
 
 AC_CHECK_HEADER(png.h, [
-    AC_CHECK_LIB(png, png_create_read_struct, , [AC_MSG_ERROR([Did not find libpng library. Please install libpng and/or set --with-png option to point to libpng $LIBS])])
+    AC_CHECK_LIB(png, png_create_read_struct, , [AC_MSG_ERROR([Did not find libpng library. Please install libpng and/or set --with-png-dir option to point to libpng $LIBS])])
     LIBS="$LIBS -lpng"
-], [AC_MSG_ERROR([Did not find libpng headers. Please install libpng and/or set --with-png option to point to libpng])])
+], [AC_MSG_ERROR([Did not find libpng headers. Please install libpng and/or set --with-png-dir option to point to libpng])])
 AC_CHECK_HEADER(webp/encode.h, [
-    AC_CHECK_LIB(webp, WebPDecodeRGB, , [AC_MSG_ERROR([Did not find libwebp library. Please install libwebp and/or set --with-webp option to point to libwebp])])
+    AC_CHECK_LIB(webp, WebPDecodeRGB, , [AC_MSG_ERROR([Did not find libwebp library. Please install libwebp and/or set --with-webp-dir option to point to libwebp])])
     LIBS="$LIBS -lwebp"
-], [AC_MSG_ERROR([Did not find libwebp headers. Please install libwebp and/or set --with-png option to point to libwebp])])
+], [AC_MSG_ERROR([Did not find libwebp headers. Please install libwebp and/or set --with-webp-dir option to point to libwebp])])
 
 AC_CONFIG_FILES([
  Makefile

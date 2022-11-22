@@ -2,6 +2,7 @@
 #define UTILS_ANDROID_UTILS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "picture_utils.h"
 
 void write_android_files(
@@ -9,7 +10,13 @@ void write_android_files(
     uint32_t width,
     uint32_t height,
     char *output_folder,
-    char *name
+    char *name,
+    bool exclude_ldpi,
+    bool exclude_mdpi,
+    bool exclude_hdpi,
+    bool exclude_xhdpi,
+    bool exclude_xxhdpi,
+    bool exclude_xxxhdpi
 );
 
 #endif  /* UTILS_ANDROID_UTILS_H */

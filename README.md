@@ -2,15 +2,9 @@
 
 ## What is this program about
 
-This program is in two parts, a binary, and an Android Studio plugin, in order to improve rasterized image management for Android.
-
-For now, only the program is available, the Android Studio plugin will be developed later.
+This program allows you to convert rasterized image to webp images that will be stored in the drawables folder of your Android project.
 
 **_PLEASE CONSIDER THIS AS A PRE_ALPHA VERSION, OR WHATEVER YOU WANT TO CALL THE LEAST STABLE VERSION_**
-
-## Licence
-
-I will use a proper licence when I will get time for it. For now, consider you can do whatever your imagination can think about with this code and that there is no warranty in any form.
 
 ## Usage
 
@@ -22,14 +16,15 @@ The program is used with the following arguments :
 * `-w` or `--width` : _Optional_ The width, in dp, of the image to create. If both this and height are skipped, we will use the size of the original image as `xxxhdpi` size. If skipped but height is set, the value that respects the proportions of the image will be used.
 * `-h` or `--height` : _Optional_ The height, in dp, of the image to create. If skipped, behavior is same as `width` parameter.
 * `-d` or `--destination` : _Optional_ The destination retrieved from config file (see below). Ignored if `-o` or `--output` is set.
+* `-e` or `--exclude` : _Optional_ Should contain one or more of `l`, `m`, `h`, `x`, `xx` and `xxx` all separated by a comma, to exclude respectively conversion to `ldpi`, `mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`.
 
 Just an exemple :
 
 ```
-droidimg -i my_image.png -o path/to/module/src/main/resources -n nice_drawable -w 100
+droidimg -i my_image.png -o path/to/module/src/main/resources -n nice_drawable -w 100 -e l,m
 ```
 
-This command will take `my_image.png`, and save `webp` files into `path/to/module/src/main/resources` drawable folders (from `ldpi` to `xxxhdpi`), setting the name of the drawable to `nice_drawable` and its width to `100dp`. It will set the height so the proportions of the original image are preserved.
+This command will take `my_image.png`, and save `webp` files into `path/to/module/src/main/resources` drawable folders (from `hdpi` to `xxxhdpi` as we exclude `ldpi` and `mdpi`), setting the name of the drawable to `nice_drawable` and its width to `100dp`. It will set the height so the proportions of the original image are preserved.
 
 ### Destinations
 
@@ -127,5 +122,30 @@ To install the application. You may have to run `sudo make` regarding your permi
 
 ### Windows
 
-Binaries have been provided for windows.
+#### From binaries
+
+Binaries have been provided for windows in the [releases](https://github.com/gahfy/droidimg/releases).
 Download the zip and extract it wherever you want.
+
+#### Compile from sources
+
+You can compile for Windows with the archive in the binaries.
+To do so, just use [Cygwin](https://www.cygwin.com/), and install mingw-w64 packages for gcc, libpng, and libwebp.
+
+Here is the command to configure that has been used to provide binaries:
+
+##### Windows 32bits (i686)
+
+```
+CC=i686-w64-mingw32-gcc ./configure --with-webp-dir=/usr/i686-w64-mingw32/sys-root/mingw --with-png-dir=/usr/i686-w64-mingw32/sys-root/mingw
+```
+
+Missing dlls can be found in `/usr/i686-w64-mingw32/sys-root/mingw/bin`.
+
+##### Windows 64bits (x86_64)
+
+```
+CC=x86_64-w64-mingw32-gcc ./configure --with-webp-dir=/usr/x86_64-w64-mingw32/sys-root/mingw --with-png-dir=/usr/x86_64-w64-mingw32/sys-root/mingw
+```
+
+Missing dlls can be found in `/usr/x86_64-w64-mingw32/sys-root/mingw/bin`.

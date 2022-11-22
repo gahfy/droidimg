@@ -76,17 +76,25 @@ static void parse_current_char(
 
 void set_destination(char *destination_name, char* folder) {
 #ifdef _WIN32
-    char *user_config_file_path = allocate(sizeof(char) * (get_string_length(getenv("USERPROFILE")) + 18));
-    sprintf(user_config_file_path, "%s/.droidimg.config", getenv("USERPROFILE"));
+    size_t pointer_size = sizeof(char) * (strlen(getenv("USERPROFILE")) + 18);
+    char *user_config_file_path = allocate(pointer_size);
+    sprintf(
+        user_config_file_path,
+        "%s/.droidimg.config",
+        getenv("USERPROFILE")
+    );
+    free(user_config_file_path);
 #else
     struct passwd *pw = getpwuid(getuid());
-    char *user_config_file_path = allocate(sizeof(char) * (get_string_length(pw->pw_dir) + 18));
+    size_t pointer_size = sizeof(char) * (strlen(pw->pw_dir) + 18);
+    char *user_config_file_path = allocate(pointer_size);
     sprintf(user_config_file_path, "%s/.droidimg.config", pw->pw_dir);
     free(pw);
 #endif
     FILE *file_pointer = fopen(user_config_file_path, "rt");
     if(file_pointer == NULL) {
-        fprintf(stderr, "Failed open config file. Ignoring destination argument.\n");
+        fprintf(stderr, "Failed open config file. ");
+        fprintf(stderr, "Ignoring destination argument.\n");
         fprintf(stderr, "Error was %s.\n", strerror(errno));
     }
     // 0 : wait for destination
@@ -100,13 +108,21 @@ void set_destination(char *destination_name, char* folder) {
     bool is_still_good = true;
     bool is_finished = false;
     char *current = allocate(sizeof(char) * 2);
-    while(fgets(current, sizeof(char) * 2, file_pointer) != NULL && !is_finished) {
-        parse_current_char(current[0], &status, &index, &destination_index, &is_still_good, &is_finished, folder, destination_name);
+    while(fgets(current, sizeof(char) * 2, file_pointer) && !is_finished) {
+        parse_current_char(
+            current[0],
+            &status,
+            &index,
+            &destination_index,
+            &is_still_good,
+            &is_finished,
+            folder,
+            destination_name
+        );
     }
-    //free(current);
+    free(current);
     if(folder != NULL && folder[destination_index-1] != 0x00) {
         folder[destination_index] = 0x00;
     }
     fclose(file_pointer);
-    free(user_config_file_path);
 }

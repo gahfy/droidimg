@@ -164,7 +164,9 @@ static void set_pixel_to_picture_from_palette_or_gray_png(
     if(definition->color_type == PNG_COLOR_TYPE_GRAY)
         set_pixel_to_picture_from_gray(picture_pixel, pixel_value, definition);
     else
-        set_pixel_to_picture_from_palette(picture_pixel, pixel_value, definition);
+        set_pixel_to_picture_from_palette(
+            picture_pixel, pixel_value, definition
+        );
 }
 
 static void set_pixel_to_picture_from_alpha_png(
@@ -259,7 +261,9 @@ static picture *initialize_picture(
 ) {
     picture *picture_pointer = allocate(sizeof(picture));
     picture_pointer->width = png_get_image_width(struct_pointer, info_pointer);
-    picture_pointer->height = png_get_image_height(struct_pointer, info_pointer);
+    picture_pointer->height = png_get_image_height(
+        struct_pointer, info_pointer
+    );
     picture_pointer->argb_pixels = allocate(
         sizeof(uint32_t) * picture_pointer->width * picture_pointer->height
     );
@@ -315,7 +319,8 @@ static png_info *init_info_pointer(png_struct *struct_pointer) {
 }
 
 /*
- * @brief Returns a pointer to an picture structure containing the image data of the given PNG file.
+ * @brief Returns a pointer to an picture structure containing the image data of
+ * the given PNG file.
  *
  * @param file_path The path to the PNG file from which to extract the picture
  *
