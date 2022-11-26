@@ -18,6 +18,7 @@
 #include "utils/constants.h"
 #include "utils/android_utils.h"
 #include "utils/config_utils.h"
+#include "errors/errors.h"
 
 static char *input_file = NULL;
 static char *output_folder = NULL;
@@ -288,6 +289,7 @@ static void validate_arguments() {
 }
 
 int main(int argc, char *argv[]) {
+    init_error_queue();
     parse_arguments(argc, argv);
     validate_arguments();
     set_output_folder_value();
@@ -312,5 +314,6 @@ int main(int argc, char *argv[]) {
     free(picture_pointer->argb_pixels);
     free(picture_pointer);
     free(output_folder);
+    free_error_queue();
     return EXIT_SUCCESS;
 }

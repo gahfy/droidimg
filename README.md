@@ -1,5 +1,10 @@
 # DroidImg
 
+## Most important first
+
+The development of this project is at the beginning, so going fast, and this `README.md` file is changing a lot, according to updates to the project.
+Please rely on the `README.md` file which is included in the release you have downloaded.
+
 ## What is this program about
 
 This program allows you to convert rasterized image to webp images that will be stored in the drawables folder of your Android project.
@@ -98,7 +103,7 @@ Then, run configure script with:
 ./configure
 ```
 
-You may want to set `--with-png-dir` and `--with-webp-dir` if you set custom installation directories for those libraries.
+You may want to set `LIBPNG_CFLAGS`, `LIBPNG_LIBS`, `LIBWEBP_CFLAGS` and/or `LIBWEBP_LIBS` if you set custom installation directories for those libraries. Alternatively, you may rely on `pkg-config` to find the libraries if you set `PKG_CONFIG_PATH` properly.
 
 #### Compiling
 
@@ -137,7 +142,7 @@ Here is the command to configure that has been used to provide binaries:
 ##### Windows 32bits (i686)
 
 ```
-CC=i686-w64-mingw32-gcc ./configure --with-webp-dir=/usr/i686-w64-mingw32/sys-root/mingw --with-png-dir=/usr/i686-w64-mingw32/sys-root/mingw
+CC=i686-w64-mingw32-gcc ./configure CFLAGS="-I/usr/i686-w64-mingw32/sys-root/mingw/include" LIBS="-L/usr/i686-w64-mingw32/sys-root/mingw/include -lpng -lwebp"
 ```
 
 Missing dlls can be found in `/usr/i686-w64-mingw32/sys-root/mingw/bin`.
@@ -145,7 +150,7 @@ Missing dlls can be found in `/usr/i686-w64-mingw32/sys-root/mingw/bin`.
 ##### Windows 64bits (x86_64)
 
 ```
-CC=x86_64-w64-mingw32-gcc ./configure --with-webp-dir=/usr/x86_64-w64-mingw32/sys-root/mingw --with-png-dir=/usr/x86_64-w64-mingw32/sys-root/mingw
+CC=x86_64-w64-mingw32-gcc ./configure CFLAGS="-I/usr/x86_64-w64-mingw32/sys-root/mingw/include" LIBS="-L/usr/x86_64-w64-mingw32/sys-root/mingw/include -lpng -lwebp"
 ```
 
 Missing dlls can be found in `/usr/x86_64-w64-mingw32/sys-root/mingw/bin`.

@@ -8,6 +8,8 @@
 #include "picture_utils.h"
 #include "png_utils.h"
 #include "memory_utils.h"
+#include "../files/reader.h"
+#include "../files/commons.h"
 
 static int get_mask(int bit_depth) {
     switch(bit_depth) {

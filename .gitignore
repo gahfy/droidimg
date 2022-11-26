@@ -1,11 +1,21 @@
+## IDE files
 **/.DS_Store
+.idea
+
+#Cache
 autom4te.cache
-aclocal.m4
+
+#Automake files
 compile
+depcomp
+
+#Aclocal files
+aclocal.m4
+
+#Autoconf files
 config.h.in
 config.h
 configure
-depcomp
 install-sh
 Makefile.in
 missing
@@ -23,3 +33,6 @@ droidimg-*.tar.gz
 **.o
 droidimg
 **.dirstamp
+*.log
+*.trs
+test-driver

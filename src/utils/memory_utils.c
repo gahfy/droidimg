@@ -14,20 +14,6 @@ void *allocate(size_t memory_size) {
     return result;
 }
 
-FILE *open_file(char *file_path, char *mode) {
-    FILE *result = fopen(file_path, mode);
-    if(result == NULL) {
-        fprintf(
-            stderr,
-            "Failed to read %s: %s.\n",
-            file_path,
-            strerror(errno)
-        );
-        exit(ERROR_CODE_FILE);
-    }
-    return result;
-}
-
 void create_directory_if_not_exists(char *directory) {
     struct stat st = {0};
     if (stat(directory, &st) == -1) {

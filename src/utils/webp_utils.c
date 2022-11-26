@@ -4,7 +4,7 @@
 #include <webp/encode.h>
 #include "constants.h"
 #include "picture_utils.h"
-#include "memory_utils.h"
+#include "../files/commons.h"
 
 static int write_picture_to_file(
     const uint8_t* data,
