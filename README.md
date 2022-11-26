@@ -115,6 +115,14 @@ make
 
 To compile the application.
 
+#### Verifying
+
+You may want to verify that everything is working the way it should with the following command:
+
+```
+make check
+```
+
 #### Installing
 
 Then run
