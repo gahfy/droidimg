@@ -1,6 +1,6 @@
 #!/bin/sh
 
-droidimg -i img/droidbot.png -o ./
+../../src/droidimg img/droidbot.png -o ./
 ldpi_md5=$(md5 -q drawable-ldpi/droidbot.webp)
 mdpi_md5=$(md5 -q drawable-mdpi/droidbot.webp)
 hdpi_md5=$(md5 -q drawable-hdpi/droidbot.webp)

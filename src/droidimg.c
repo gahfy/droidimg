@@ -34,23 +34,18 @@ static bool exclude_xxhdpi = false;
 static bool exclude_xxxhdpi = false;
 
 static void usage() {
-    printf("usage: droidimg -i|--input <input_png_file>\n");
-    printf("                [-o|--output <output_resource_folder>] ");
-    printf("[-n|--name <file_name>]\n");
-    printf("                [-w|--with <width_in_dp>] ");
-    printf("[-h|--height <height_in_dp>]\n");
+    printf("usage: droidimg <input_png_file> ");
+    printf("[-o|--output <output_resource_folder>]\n");
+    printf("                [-n|--name <file_name>] [-w|--with <width_in_dp>]\n");
+    printf("                [-h|--height <height_in_dp>]\n");
     printf("                [-d|--destination <destination_from_config>]\n");
     printf("                [-e|--exclude <l,m,h,x,xx,xxx>]\n");
 }
 
 static void parse_input_file(int argc, char *argv[], int *index) {
-    if(index[0] >= argc-1)
-        return;
-    if(strcmp(argv[index[0]], "--input") * strcmp(argv[index[0]], "-i") == 0) {
-        input_file = allocate(sizeof(char) * (strlen(argv[index[0]+1]) + 1));
-        copy_string(input_file, argv[index[0]+1], strlen(argv[index[0]+1]));
-        index[0] += 2;
-    }
+    input_file = allocate(sizeof(char) * (strlen(argv[index[0]]) + 1));
+    copy_string(input_file, argv[index[0]], strlen(argv[index[0]]));
+    index[0]++;
 }
 
 static void parse_output_folder(int argc, char *argv[], int *index) {
@@ -180,13 +175,15 @@ static void parse_arguments(int argc, char *argv[]) {
     int index = 1;
     int previous_index = 1;
     while(index < argc) {
-        parse_input_file(argc, argv, &index);
         parse_output_folder(argc, argv, &index);
         parse_name(argc, argv, &index);
         parse_width(argc, argv, &index);
         parse_height(argc, argv, &index);
         parse_destination(argc, argv, &index);
         parse_exclude(argc, argv, &index);
+        if(index == previous_index && input_file == NULL) {
+            parse_input_file(argc, argv, &index);
+        }
         if(index == previous_index) {
             usage();
             exit(ERROR_CODE_ARGUMENTS);

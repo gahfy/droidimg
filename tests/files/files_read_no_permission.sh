@@ -1,3 +1,5 @@
+#!/bin/sh
+
 result=$(cat files_read_no_permission.log)
 expected_result="Failed to read files/no_permission_file
 Caused by: Permission denied
