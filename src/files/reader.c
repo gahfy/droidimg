@@ -217,6 +217,8 @@ static void reset_file_not_null_data(file_data *restrict file_data_pointer) {
 static void add_buffer_to_file_data(
     uint8_t *restrict buffer, int size, file_data *restrict file_data_pointer
 ) {
+    if(size == 0)
+        return;
     realloc_file_data_pointer(file_data_pointer, size);
     memcpy(
         &file_data_pointer->data_pointer[file_data_pointer->size],
