@@ -23,23 +23,21 @@ fi
 
 ../../src/droidimg img/droidbot.png -o ./ -e l,m,h,xx,xxx
 xhdpi_md5=($(md5sum drawable-xhdpi/droidbot.webp))
-if [ "$xhdpi_md5" != "72ca6322765b4cbc78804adeb11488f6" ]; then
+if [ "$xhdpi_md5" != "89d5ad09cd5ac0637a30252b29508c91" ]; then
     echo "xhdpi image is not the one expected.\n"
-    echo "$xhdpi_md5"
-    echo "72ca6322765b4cbc78804adeb11488f6"
     exit 1
 fi
 
 ../../src/droidimg img/droidbot.png -o ./ -e l,m,h,x,xxx
 xxhdpi_md5=($(md5sum drawable-xxhdpi/droidbot.webp))
-if [ "$xxhdpi_md5" != "3d8ec07d57b93528b7cb7c973e0e33d0" ]; then
+if [ "$xxhdpi_md5" != "6a048a41fbd98737cab86a2c3f34f4b4" ]; then
     echo "xxhdpi image is not the one expected.\n"
     exit 1
 fi
 
 ../../src/droidimg img/droidbot.png -o ./ -e l,m,h,x,xx
 xxxhdpi_md5=($(md5sum drawable-xxxhdpi/droidbot.webp))
-if [ "$xxxhdpi_md5" != "524a63c66e0081d2ece7b8cff7031323" ]; then
+if [ "$xxxhdpi_md5" != "4356444b971d7c052ebfcfabd3cb5cf3" ]; then
     echo "xxxhdpi image is not the one expected.\n"
     exit 1
 fi
