@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 file="files_read_not_existing.log"
 

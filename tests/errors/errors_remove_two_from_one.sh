@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 file="errors_remove_two_from_one.log"
 

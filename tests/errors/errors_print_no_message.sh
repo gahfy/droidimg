@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 file="errors_print_no_message.log"
 

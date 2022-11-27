@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 file="files_write_no_permission_directory.log"
 

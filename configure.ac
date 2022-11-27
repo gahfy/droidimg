@@ -1,4 +1,4 @@
-AC_INIT([droidimg], [0.01], [g.herfray@gahfy.io])
+AC_INIT([droidimg], [0.1], [g.herfray@gahfy.io])
 AM_INIT_AUTOMAKE([-W -Wall subdir-objects])
 ac_abs_confdir=`(
     cd "$srcdir" && test -r "./$ac_unique_file" || as_fn_error $? "$ac_msg"

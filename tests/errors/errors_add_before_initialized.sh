@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 file="errors_add_before_initialized.log"
 

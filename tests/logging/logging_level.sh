@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 result=$(cat logging_level.log)
 error=0

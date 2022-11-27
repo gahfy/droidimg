@@ -117,6 +117,8 @@ To compile the application.
 
 #### Verifying
 
+> There is currently a refactoring of the code, as we saw some difference between CLang and GCC in compilation of binaries. The test `convert_png_to_android.sh` is known to fail if using CLang. macOS users may encounter this failure.
+
 You may want to verify that everything is working the way it should with the following command:
 
 ```
