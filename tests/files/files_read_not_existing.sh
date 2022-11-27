@@ -1,13 +1,18 @@
 #!/bin/sh
 
-result=$(cat files_read_not_existing.log)
+file="files_read_not_existing.log"
+
+wc_output=$(wc -l < $file)
+length=${wc_output##*( )}
+lines_kept=$(echo `expr $length - 1`)
+
+result=$(head -n $lines_kept $file | perl -0p -e "s/\R\z//g")
 expected_result="Failed to read not_existing_file
-Caused by: No such file or directory
-XFAIL files_read_not_existing (exit status: 1)"
+Caused by: No such file or directory"
 
 if [ "$result" != "$expected_result" ]; then
     echo "Result of command is not as expected"
-    echo "Result: $result\n\n"
-    echo "Expected result: $expected_result\n\n"
+    echo "Result: $result"
+    echo "Expected result: $expected_result"
     exit 1
 fi

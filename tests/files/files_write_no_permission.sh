@@ -1,14 +1,19 @@
 #!/bin/sh
 
-result=$(cat files_write_no_permission.log)
+file="files_write_no_permission.log"
+
+wc_output=$(wc -l < $file)
+length=${wc_output##*( )}
+lines_kept=$(echo `expr $length - 1`)
+
+result=$(head -n $lines_kept $file | perl -0p -e "s/\R\z//g")
 expected_result="Failed to write files/no_permission_file
-Caused by: Permission denied
-XFAIL files_write_no_permission (exit status: 1)"
+Caused by: Permission denied"
 
 if [ "$result" != "$expected_result" ]; then
     echo "Result of command is not as expected"
-    echo "Result: $result\n\n"
-    echo "Expected result: $expected_result\n\n"
+    echo "Result: $result"
+    echo "Expected result: $expected_result"
     rm -rf ./files
     exit 1
 fi
