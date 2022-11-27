@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ../../src/droidimg img/droidbot.png -o ./ -e m,h,x,xx,xxx
 ldpi_md5=($(md5sum drawable-ldpi/droidbot.webp))
