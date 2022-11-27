@@ -5,7 +5,7 @@
 #include <string.h>
 #include "binary_utils.h"
 #include "constants.h"
-#include "picture_utils.h"
+#include "../pictures/pictures.h"
 #include "png_utils.h"
 #include "memory_utils.h"
 #include "../files/reader.h"

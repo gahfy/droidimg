@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <webp/encode.h>
 #include "constants.h"
-#include "picture_utils.h"
+#include "../pictures/pictures.h"
 #include "../files/commons.h"
 
 static int write_picture_to_file(

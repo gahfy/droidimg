@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "picture_utils.h"
+#include "../pictures/pictures.h"
 
 void write_android_files(
     picture *picture,

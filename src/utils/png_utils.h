@@ -1,7 +1,7 @@
 #ifndef UTILS_PNG_UTILS_H
 #define UTILS_PNG_UTILS_H
 
-#include "picture_utils.h"
+#include "../pictures/pictures.h"
 
 typedef struct png_palette {
     png_color *colors;

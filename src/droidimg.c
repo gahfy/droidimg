@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "utils/png_utils.h"
-#include "utils/picture_utils.h"
+#include "pictures/pictures.h"
 #include "utils/memory_utils.h"
 #include "utils/string_utils.h"
 #include "utils/webp_utils.h"
