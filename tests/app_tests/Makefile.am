@@ -1,1 +1,1 @@
-TESTS = convert_png_to_android.sh
+## TESTS = convert_png_to_android.sh

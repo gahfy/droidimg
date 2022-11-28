@@ -56,6 +56,7 @@ AC_CONFIG_FILES([
  tests/errors/Makefile
  tests/files/Makefile
  tests/logging/Makefile
+ tests/pictures/Makefile
 ])
 
 AC_OUTPUT

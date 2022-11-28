@@ -22,6 +22,25 @@ typedef struct picture{
 } picture;
 
 /**
+ * Initializes a picture pointer with the given width and height and returns it.
+ * If it fails to allocate memory, then the program will end with an error
+ * message.
+ *
+ * @param width  the width of the picture to initialize
+ * @param height the height of the picture to initialize
+ *
+ * @return the picture that has been initializes.
+ */
+picture *init_picture(uint32_t width, uint32_t height);
+
+/**
+ * Desallocate the memory allocated to a picture.
+ *
+ * @param picture_pointer the pointer to the picture to desallocate
+ */
+void free_picture(picture *restrict picture_pointer);
+
+/**
  * Returns a 32 bits unsigned integer which is the color of the pixel at the
  * given x and y coordinates for an image which would be the copy of the given
  * picture, but resized to the given width and height.
