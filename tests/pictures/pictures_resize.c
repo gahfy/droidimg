@@ -7,6 +7,7 @@
 static picture *file_to_picture(
     char *restrict file_path, uint32_t width, uint32_t height
 );
+
 static void compare_pixels(
     picture *picture_pointer, picture *new_picture,
     uint32_t new_width, uint32_t new_height

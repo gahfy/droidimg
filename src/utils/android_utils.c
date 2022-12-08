@@ -4,7 +4,7 @@
 #include <string.h>
 #include "android_utils.h"
 #include "string_utils.h"
-#include "webp_utils.h"
+#include "../webp/writer.h"
 #include "memory_utils.h"
 
 static uint32_t get_ldpi_size(uint32_t mdpi_size) {
@@ -49,7 +49,7 @@ static void write_android_picture(
     sprintf(drawable_folder, "%sdrawable-%s", output_folder, suffix);
     create_directory_if_not_exists(drawable_folder);
     sprintf(output_file_name, "%s/%s.webp", drawable_folder, name);
-    write_to_webp(picture, output_file_name, width, height);
+    write_picture_to_webp(picture, output_file_name, width, height, 100.0);
 }
 
 static void write_ldpi_picture(
@@ -197,7 +197,7 @@ void write_android_files(
     char *drawable_folder = initialize_output_file_name(output_folder, name);
     if(!exclude_ldpi) {
         printf("Converting LDPI picture: ");
-        fflush(stdout);
+        //fflush(stdout);
         write_ldpi_picture(
             picture,
             output_folder,
@@ -211,7 +211,7 @@ void write_android_files(
     }
     if(!exclude_mdpi) {
         printf("Converting MDPI picture: ");
-        fflush(stdout);
+        //fflush(stdout);
         write_mdpi_picture(
             picture,
             output_folder,
@@ -225,7 +225,7 @@ void write_android_files(
     }
     if(!exclude_hdpi) {
         printf("Converting HDPI picture: ");
-        fflush(stdout);
+        //fflush(stdout);
         write_hdpi_picture(
             picture,
             output_folder,
@@ -239,7 +239,7 @@ void write_android_files(
     }
     if(!exclude_xhdpi) {
         printf("Converting XHDPI picture: ");
-        fflush(stdout);
+        //fflush(stdout);
         write_xhdpi_picture(
             picture,
             output_folder,
@@ -253,7 +253,7 @@ void write_android_files(
     }
     if(!exclude_xxhdpi) {
         printf("Converting XXHDPI picture: ");
-        fflush(stdout);
+        //fflush(stdout);
         write_xxhdpi_picture(
             picture,
             output_folder,
@@ -267,7 +267,7 @@ void write_android_files(
     }
     if(!exclude_xxxhdpi) {
         printf("Converting XXXHDPI picture: ");
-        fflush(stdout);
+        //fflush(stdout);
         write_xxxhdpi_picture(
             picture,
             output_folder,

@@ -1,6 +1,7 @@
 ## IDE files
 **/.DS_Store
 .idea
+.vscode
 
 #Cache
 autom4te.cache

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <png.h>
 #include <unistd.h>
 #include <errno.h>
 #include <limits.h>
@@ -10,15 +9,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "utils/png_utils.h"
+#include "png/reader.h"
+#include "webp/reader.h"
+#include "webp/writer.h"
 #include "pictures/pictures.h"
 #include "utils/memory_utils.h"
 #include "utils/string_utils.h"
-#include "utils/webp_utils.h"
 #include "utils/constants.h"
 #include "utils/android_utils.h"
 #include "utils/config_utils.h"
 #include "errors/errors.h"
+#include "android/drawables.h"
 
 static char *input_file = NULL;
 static char *output_folder = NULL;
@@ -291,10 +292,18 @@ int main(int argc, char *argv[]) {
     validate_arguments();
     set_output_folder_value();
     set_name_from_input_file();
-    picture *picture_pointer = get_picture_from_png_file(input_file);
+    picture *picture_pointer;
+    if(is_webp_image(input_file)) {
+        picture_pointer = read_webp_image(input_file);
+    } else if(is_png_image(input_file)) {
+        picture_pointer = read_png_image(input_file);
+    } else {
+        add_error_message_to_queue("Cannot determine input file format.");
+        exit(EXIT_FAILURE);
+    }
     free(input_file);
     set_width_and_height(picture_pointer);
-    write_android_files(
+    /*write_android_files(
         picture_pointer,
         width,
         height,
@@ -306,7 +315,28 @@ int main(int argc, char *argv[]) {
         exclude_xhdpi,
         exclude_xxhdpi,
         exclude_xxxhdpi
-    );
+    );*/
+
+
+
+    printf("Test main: %d * %d\n", width, height);
+    drawable_config *config = malloc(sizeof(drawable_config));
+    config->quality = 100.0;
+    config->width = width;
+    config->height = height;
+    config->name = name;
+    config->exclude_ldpi = exclude_ldpi;
+    config->exclude_mdpi = exclude_mdpi;
+    config->exclude_hdpi = exclude_hdpi;
+    config->exclude_xhdpi = exclude_xhdpi;
+    config->exclude_xxhdpi = exclude_xxhdpi;
+    config->exclude_xxxhdpi = exclude_xxxhdpi;
+    printf("Test main 2: %d * %d\n", config->width, config->height);
+
+    write_android_drawables(picture_pointer, output_folder, config);
+
+
+
     free(name);
     free(picture_pointer->argb_pixels);
     free(picture_pointer);
