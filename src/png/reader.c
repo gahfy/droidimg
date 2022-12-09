@@ -45,6 +45,7 @@ bool is_png_image(char *restrict file_path) {
     if(size_read < 8)
         return false;
     bool result = is_header_of_png(file_header);
+    free(file_header);
     return result;
 }
 
@@ -273,6 +274,7 @@ static void print_png_library_not_found_error_and_exit() {
                 &cache->info_pointer,
                 NULL
             );
+            free(cache->palette);
             free(cache);
         }
     }

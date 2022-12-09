@@ -18,12 +18,6 @@ char get_last_character(char *char_pointer) {
     return char_pointer[strlen(char_pointer) - 1];
 }
 
-void copy_string(char *destination, char *original, size_t length) {
-    strncpy(destination, original, length);
-    // Security for Windows
-    destination[length] = 0x00;
-}
-
 int get_last_index(char *string, char character, int start_index) {
     char *last_occurrence = strrchr(string, character);
     if(last_occurrence == NULL) {

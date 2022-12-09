@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 #include "png/reader.h"
 #include "webp/reader.h"
 #include "webp/writer.h"
@@ -53,7 +54,7 @@ static void parse_input_file(int argc, char *argv[], int *index) {
         loge("Failed to allocate memory for input file argument.\n");
         exit(EXIT_FAILURE);
     }
-    copy_string(input_file, argv[index[0]], strlen(argv[index[0]]));
+    memcpy(input_file, argv[index[0]], strlen(argv[index[0]])+1);
     index[0]++;
 }
 
@@ -64,7 +65,7 @@ static void parse_output_folder(int argc, char *argv[], int *index) {
         // +2 because we may add a final / or \ at the end of the name
         output_folder = malloc(sizeof(char) * (strlen(argv[index[0]+1]) + 2));
         validate_output_folder();
-        copy_string(output_folder, argv[index[0]+1], strlen(argv[index[0]+1]));
+        memcpy(output_folder, argv[index[0]+1], strlen(argv[index[0]+1])+1);
         index[0] += 2;
     }
 }
@@ -78,7 +79,7 @@ static void parse_name(int argc, char *argv[], int *index) {
             loge("Failed to allocate memory for name argument.\n");
             exit(EXIT_FAILURE);
         }
-        copy_string(name, argv[index[0]+1], strlen(argv[index[0]+1]));
+        memcpy(name, argv[index[0]+1], strlen(argv[index[0]+1])+1);
         index[0] += 2;
     }
 }
@@ -113,7 +114,7 @@ static void parse_destination(int argc, char *argv[], int *index) {
             loge("Failed to allocate memory for destination argument.\n");
             exit(EXIT_FAILURE);
         }
-        copy_string(destination, argv[index[0]+1], strlen(argv[index[0]+1]));
+        memcpy(destination, argv[index[0]+1], strlen(argv[index[0]+1])+1);
         index[0] += 2;
     }
 }
@@ -270,7 +271,7 @@ static void set_name_from_input_file() {
             loge("Failed to allocate memory for name argument.\n");
             exit(EXIT_FAILURE);
         }
-        copy_string(name, &input_file[start_index], length);
+        memcpy(name, &input_file[start_index], length+1);
     }
 }
 
@@ -343,7 +344,7 @@ int main(int argc, char *argv[]) {
     write_android_drawables(picture_pointer, output_folder, config);
 
 
-
+    free(config);
     free(name);
     free(picture_pointer->argb_pixels);
     free(picture_pointer);

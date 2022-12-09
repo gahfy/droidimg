@@ -54,6 +54,7 @@ bool is_webp_image(char *restrict file_path) {
     if(size_read < 12)
         return false;
     bool result = is_header_of_webp(file_header);
+    free(file_header);
     return result;
 }
 
