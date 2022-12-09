@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "../../src/pictures/pictures.h"
 #include "../../src/files/reader.h"
-#include "../../src/errors/errors.h"
 
 static picture *file_to_picture(
     char *restrict file_path, uint32_t width, uint32_t height
@@ -14,7 +13,6 @@ static void compare_pixels(
 );
 
 int main(int argc, char *argv[]) {
-    init_error_queue();
     uint32_t new_width = 846;
     uint32_t new_height = 477;
     uint32_t width = 1129;
@@ -24,7 +22,6 @@ int main(int argc, char *argv[]) {
     compare_pixels(picture_pointer, new_picture, new_width, new_height);
     free_picture(picture_pointer);
     free_picture(new_picture);
-    free_error_queue();
     return EXIT_SUCCESS;
 }
 

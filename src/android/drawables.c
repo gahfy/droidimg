@@ -1,10 +1,12 @@
 #include "drawables.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
+#if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
+    #include <pthread.h>
+#endif
 #include <string.h>
 #include "../files/writer.h"
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 #include "../webp/writer.h"
 
 typedef enum drawable_res {
@@ -23,7 +25,6 @@ typedef struct thread_arg{
     int thread_id;
 } thread_arg;
 
-static pthread_t *init_threads();
 static thread_arg *init_thread_arguments(
     picture *restrict picture_pointer,
     char *restrict output_folder,
@@ -35,9 +36,6 @@ static void *write_hdpi(void *args);
 static void *write_xhdpi(void *args);
 static void *write_xxhdpi(void *args);
 static void *write_xxxhdpi(void *arguments);
-static void join_threads_and_free(
-    pthread_t *restrict threads, thread_arg *restrict arguments
-);
 static void validate_thread_arguments(thread_arg *restrict arguments);
 
 static char *get_and_create_destination_folder(
@@ -65,43 +63,87 @@ static char *get_file_path(char *restrict folder, char *restrict name);
 
 static void validate_file_path(char *restrict file_path);
 
+#if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
+    static pthread_t *init_threads();
+    static void create_threads(
+        pthread_t *restrict threads, thread_arg *restrict arguments
+    );
+    static void join_threads_and_free(
+        pthread_t *restrict threads, thread_arg *restrict arguments
+    );
+#else
+    static void convert_without_threads(thread_arg *restrict arguments);
+#endif
+
 void write_android_drawables(
     picture *restrict image,
     char *restrict output_folder,
     drawable_config *restrict config
 ) {
     thread_arg *arguments = init_thread_arguments(image, output_folder, config);
-    pthread_t *threads = init_threads();
-    /*write_ldpi((void *) arguments);
-    write_mdpi((void *) arguments);
-    write_hdpi((void *) arguments);
-    write_xhdpi((void *) arguments);
-    write_xxhdpi((void *) arguments);
-    write_xxxhdpi((void *) arguments);*/
-    pthread_create(&threads[0], NULL, write_ldpi, (void *) arguments);
-    pthread_create(&threads[1], NULL, write_mdpi, (void *) arguments);
-    pthread_create(&threads[2], NULL, write_hdpi, (void *) arguments);
-    pthread_create(&threads[3], NULL, write_xhdpi, (void *) arguments);
-    pthread_create(&threads[4], NULL, write_xxhdpi, (void *) arguments);
-    pthread_create(&threads[5], NULL, write_xxxhdpi, (void *) arguments);
-    join_threads_and_free(threads, arguments);
+    #if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
+        pthread_t *threads = init_threads();
+        create_threads(threads, arguments);
+        join_threads_and_free(threads, arguments);
+    #else
+        convert_without_threads(arguments);
+        free(arguments);
+    #endif
 }
 
-/**
- * Initializes the threads that will be used to write the drawables. If memory
- * allocation failed, the program will end with an error message.
- *
- * @return the pointer to the threads that has been initialized
- */
-static pthread_t *init_threads() {
-    pthread_t *threads = malloc(sizeof(pthread_t) * 6);
-    if(threads == NULL) {
-        add_error_message_to_queue("Failed to allocate memory for threads");
-        print_errors();
-        exit(EXIT_FAILURE);
+#if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
+    static void create_threads(
+        pthread_t *restrict threads, thread_arg *restrict arguments
+    ) {
+        pthread_create(&threads[0], NULL, write_ldpi, (void *) arguments);
+        pthread_create(&threads[1], NULL, write_mdpi, (void *) arguments);
+        pthread_create(&threads[2], NULL, write_hdpi, (void *) arguments);
+        pthread_create(&threads[3], NULL, write_xhdpi, (void *) arguments);
+        pthread_create(&threads[4], NULL, write_xxhdpi, (void *) arguments);
+        pthread_create(&threads[5], NULL, write_xxxhdpi, (void *) arguments);
     }
-    return threads;
-}
+
+    /**
+     * Initializes the threads that will be used to write the drawables. If
+     * memory allocation failed, the program will end with an error message.
+     *
+     * @return the pointer to the threads that has been initialized
+     */
+    static pthread_t *init_threads() {
+        pthread_t *threads = malloc(sizeof(pthread_t) * 6);
+        if(threads == NULL) {
+            loge("Failed to allocate memory for threads");
+            exit(EXIT_FAILURE);
+        }
+        return threads;
+    }
+
+    /**
+    * Joins the threads in the given pointer and free all allocated memory for
+    * the threads.
+    *
+    * @param threads   the threads to join and then free
+    * @param arguments the arguments to free at the end
+    */
+    static void join_threads_and_free(
+        pthread_t *restrict threads, thread_arg *restrict arguments
+    ) {
+        for (int i=0; i<6; ++i) {
+            pthread_join(threads[i], NULL);
+        }
+        free(threads);
+        free(arguments);
+    }
+#else
+    static void convert_without_threads(thread_arg *restrict arguments) {
+        write_ldpi(arguments);
+        write_mdpi(arguments);
+        write_hdpi(arguments);
+        write_xhdpi(arguments);
+        write_xxhdpi(arguments);
+        write_xxxhdpi(arguments);
+    }
+#endif
 
 /**
  * Initializes a pointer to the structure which will contain the arguments
@@ -230,23 +272,6 @@ static void *write_xxxhdpi(void *args) {
 }
 
 /**
- * Joins the threads in the given pointer and free all allocated memory for the
- * threads.
- *
- * @param threads   the threads to join and then free
- * @param arguments the arguments to free at the end
- */
-static void join_threads_and_free(
-    pthread_t *restrict threads, thread_arg *restrict arguments
-) {
-    for (int i=0; i<6; ++i) {
-        pthread_join(threads[i], NULL);
-    }
-    free(threads);
-    free(arguments);
-}
-
-/**
  * Checks that the given arguments is not NULL. If it is, then the program will
  * end with an error message.
  *
@@ -254,8 +279,7 @@ static void join_threads_and_free(
  */
 static void validate_thread_arguments(thread_arg *restrict arguments) {
     if(arguments == NULL) {
-        add_error_message_to_queue("Failed to allocate memory for arguments");
-        print_errors();
+        loge("Failed to allocate memory for arguments");
         exit(EXIT_FAILURE);
     }
 }
@@ -276,10 +300,7 @@ static char *get_and_create_destination_folder(
 
 static void validate_destination_folder(char *restrict destination_folder) {
     if(destination_folder == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate memory for the name of the directory"
-        );
-        print_errors();
+        loge("Failed to allocate memory for the name of the directory");
         exit(EXIT_FAILURE);
     }
 }
@@ -341,10 +362,7 @@ static char *get_file_path(char *restrict folder, char *restrict name) {
 
 static void validate_file_path(char *restrict file_path) {
     if(file_path == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate memory for the name of the directory"
-        );
-        print_errors();
+        loge("Failed to allocate memory for the name of the directory");
         exit(EXIT_FAILURE);
     }
 }

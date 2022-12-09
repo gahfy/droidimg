@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "../../src/pictures/pictures.h"
 #include "../../src/files/reader.h"
-#include "../../src/errors/errors.h"
 #include "../../src/webp/reader.h"
 
 static void compare_pixels(picture *picture1, picture *picture2);
@@ -12,7 +11,6 @@ static picture *file_to_picture(
 );
 
 int main(int argc, char *argv[]) {
-    init_error_queue();
     uint32_t width = 1129;
     uint32_t height = 638;
     picture *picture_pointer = file_to_picture("img/droidbot.picture", width, height);
@@ -20,7 +18,6 @@ int main(int argc, char *argv[]) {
     compare_pixels(picture_pointer, webp_picture);
     free_picture(picture_pointer);
     free_picture(webp_picture);
-    free_error_queue();
     return EXIT_SUCCESS;
 }
 

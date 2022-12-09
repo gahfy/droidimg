@@ -18,7 +18,7 @@
 #include "utils/constants.h"
 #include "utils/android_utils.h"
 #include "utils/config_utils.h"
-#include "errors/errors.h"
+#include "logging/logging.h"
 #include "android/drawables.h"
 
 static char *input_file = NULL;
@@ -287,7 +287,6 @@ static void validate_arguments() {
 }
 
 int main(int argc, char *argv[]) {
-    init_error_queue();
     parse_arguments(argc, argv);
     validate_arguments();
     set_output_folder_value();
@@ -298,28 +297,11 @@ int main(int argc, char *argv[]) {
     } else if(is_png_image(input_file)) {
         picture_pointer = read_png_image(input_file);
     } else {
-        add_error_message_to_queue("Cannot determine input file format.");
+        loge("Cannot determine input file format.");
         exit(EXIT_FAILURE);
     }
     free(input_file);
     set_width_and_height(picture_pointer);
-    /*write_android_files(
-        picture_pointer,
-        width,
-        height,
-        output_folder,
-        name,
-        exclude_ldpi,
-        exclude_mdpi,
-        exclude_hdpi,
-        exclude_xhdpi,
-        exclude_xxhdpi,
-        exclude_xxxhdpi
-    );*/
-
-
-
-    printf("Test main: %d * %d\n", width, height);
     drawable_config *config = malloc(sizeof(drawable_config));
     config->quality = 100.0;
     config->width = width;
@@ -331,7 +313,6 @@ int main(int argc, char *argv[]) {
     config->exclude_xhdpi = exclude_xhdpi;
     config->exclude_xxhdpi = exclude_xxhdpi;
     config->exclude_xxxhdpi = exclude_xxxhdpi;
-    printf("Test main 2: %d * %d\n", config->width, config->height);
 
     write_android_drawables(picture_pointer, output_folder, config);
 
@@ -341,6 +322,5 @@ int main(int argc, char *argv[]) {
     free(picture_pointer->argb_pixels);
     free(picture_pointer);
     free(output_folder);
-    free_error_queue();
     return EXIT_SUCCESS;
 }

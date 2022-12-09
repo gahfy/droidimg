@@ -1,48 +1,46 @@
 #include "commons.h"
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-static void add_error_message(
+static void log_error_message(
     const char *restrict file_path,
     const char *restrict mode
 );
-static void add_allocated_open_error_message(
+static void log_allocated_open_error_message(
     char *error_message,
     const char *restrict file_path,
     const char *restrict mode
 );
-static void add_generic_open_error_message(const char *restrict mode);
+static void log_generic_open_error_message(const char *restrict mode);
 
 FILE *open_file(const char *restrict file_path, const char *restrict mode) {
-    add_error_message(file_path, mode);
     FILE *file_pointer = fopen(file_path, mode);
     if(file_pointer == NULL) {
-        add_error_message_to_queue(strerror(errno));
-        print_errors();
+        log_error_message(file_path, mode);
+        loge("Caused by: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    remove_last_error();
     return file_pointer;
 }
 
 /**
- * Adds an error message for opening a file.
+ * Logs an error message for opening a file.
  *
  * @param file_path The path of the file to open
  * @param mode      The mode passed to fopen to determine how the file will be
  *                  treated
  */
-static void add_error_message(
+static void log_error_message(
     const char *restrict file_path,
     const char *restrict mode
 ) {
     char *error_message = malloc(22 + strlen(file_path));
     if(error_message == NULL) {
-        add_generic_open_error_message(mode == NULL ? "" : mode);
+        log_generic_open_error_message(mode == NULL ? "" : mode);
     } else {
-        add_allocated_open_error_message(
+        log_allocated_open_error_message(
             error_message, file_path, mode == NULL ? "" : mode
         );
         free(error_message);
@@ -50,7 +48,7 @@ static void add_error_message(
 }
 
 /**
- * Adds a message error for opening a file containing the path to the file. The
+ * Logs a message error for opening a file containing the path to the file. The
  * error_message argument should have been allocated before. If allocation
  * failed, call add_generic_open_error_message(const char *restrict mode)
  * method instead.
@@ -60,7 +58,7 @@ static void add_error_message(
  * @param mode          The mode passed to fopen to determine how the file will
  *                      be treated
  */
-static void add_allocated_open_error_message(
+static void log_allocated_open_error_message(
     char *error_message,
     const char *restrict file_path,
     const char *restrict mode
@@ -73,7 +71,7 @@ static void add_allocated_open_error_message(
         sprintf(error_message, "Failed to read %s\n", file_path);
     else
         sprintf(error_message, "Failed to write %s\n", file_path);
-    add_error_message_to_queue(error_message);
+    loge(error_message);
 }
 
 /**
@@ -84,13 +82,13 @@ static void add_allocated_open_error_message(
  * @param mode The mode passed to fopen to determine how the file will be
  *             treated
  */
-static void add_generic_open_error_message(const char *restrict mode) {
+static void log_generic_open_error_message(const char *restrict mode) {
     if(strlen(mode) < 1 || (mode[0] != 'a' && mode[0] != 'r' && mode[0] != 'w'))
-        add_error_message_to_queue("Failed to write file.\n");
+        loge("Failed to write file.\n");
     else if(mode[0] == 'a')
-        add_error_message_to_queue("Failed to append to file.\n");
+        loge("Failed to append to file.\n");
     else if(mode[0] == 'r')
-        add_error_message_to_queue("Failed to read file.\n");
+        loge("Failed to read file.\n");
     else
-        add_error_message_to_queue("Failed to write file.\n");
+        loge("Failed to write file.\n");
 }

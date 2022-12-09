@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "../files/reader.h"
 #include "../files/commons.h"
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 #include "../pictures/pictures.h"
 #include <webp/decode.h>
 
@@ -38,17 +38,14 @@ static void print_get_webp_info_error_and_exit();
 static void print_animated_webp_error();
 
 picture *read_webp_image(char *restrict file_path) {
-    add_error_message_to_queue("Failed to read webp image.");
     file_data *file_data_pointer = init_file_data();
     read_file(file_data_pointer, file_path);
     picture *picture = read_webp_image_from_data(file_data_pointer);
     free_file_data(file_data_pointer);
-    remove_last_error();
     return picture;
 }
 
 bool is_webp_image(char *restrict file_path) {
-    add_error_message_to_queue("Cannot check if file is a webp image.");
     FILE *file_pointer = open_file(file_path, "rb");
     uint8_t *file_header = malloc(sizeof(uint8_t) * 12);
     validate_file_header(file_header);
@@ -57,7 +54,6 @@ bool is_webp_image(char *restrict file_path) {
     if(size_read < 12)
         return false;
     bool result = is_header_of_webp(file_header);
-    remove_last_error();
     return result;
 }
 
@@ -87,10 +83,7 @@ static picture *read_webp_image_from_data(
  */
 static void validate_file_header(uint8_t *restrict file_header) {
     if(file_header == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate memory to read the header of the file.\n"
-        );
-        print_errors();
+        loge("Failed to allocate memory to read the header of the file.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -227,10 +220,7 @@ static void set_pixel_of_picture(
 static WebPBitstreamFeatures *init_webp_bitstream_features() {
     WebPBitstreamFeatures *features = malloc(sizeof(WebPBitstreamFeatures));
     if(features == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate memory for config from webp file.\n"
-        );
-        print_errors();
+        loge("Failed to allocate memory for config from webp file.\n");
         exit(EXIT_FAILURE);
     }
     return features;
@@ -266,8 +256,7 @@ static VP8StatusCode get_webp_info(
  * file and exits the program.
  */
 static void print_get_webp_info_error_and_exit() {
-    add_error_message_to_queue("Failed to get config from webp file.\n");
-    print_errors();
+    loge("Failed to get config from webp file.\n");
     exit(EXIT_FAILURE);
 }
 
@@ -275,7 +264,6 @@ static void print_get_webp_info_error_and_exit() {
  * Prints the error of unsupported animated webp and exits the program.
  */
 static void print_animated_webp_error() {
-    add_error_message_to_queue("Animated webp images are not supported.\n");
-    print_errors();
+    loge("Animated webp images are not supported.\n");
     exit(EXIT_FAILURE);
 }

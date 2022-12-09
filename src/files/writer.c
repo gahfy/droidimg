@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 
 static void make_directory(char *restrict directory);
 
@@ -12,8 +12,8 @@ void create_directory_if_not_exists(char *restrict directory) {
         int result = -1;
         make_directory(directory);
         if(result != 0) {
-            add_error_message_to_queue(strerror(errno));
-            add_error_message_to_queue(get_error_message(directory));
+            loge(get_error_message(directory));
+            loge("Caused by: %s\n", strerror(errno));
             print_errors();
             exit(EXIT_FAILURE);
         }

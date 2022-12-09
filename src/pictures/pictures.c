@@ -1,5 +1,5 @@
 #include "pictures.h"
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -67,7 +67,7 @@ static void divide_sum_and_add_to_picture_sum(
     uint32_t *restrict coordinates_pointer
 );
 static void validate_coordinates(uint32_t coordinate, uint32_t size);
-static void add_error_invalid_coordinates(uint32_t coordinates, uint32_t size);
+static void log_error_invalid_coordinates(uint32_t coordinates, uint32_t size);
 static void add_pixel_to_channels(
     uint32_t pixel,
     uint64_t *restrict pixel_sum_pointer
@@ -82,8 +82,7 @@ picture *init_picture(uint32_t width, uint32_t height) {
         result->argb_pixels = malloc(sizeof(uint32_t) * memory_size);
     }
     if(result == NULL || result->argb_pixels == NULL) {
-        add_error_message_to_queue("Failed to allocate memory for the picture");
-        print_errors();
+        loge("Failed to allocate memory for the picture");
         exit(EXIT_FAILURE);
     }
     return result;
@@ -105,10 +104,8 @@ uint32_t get_pixel_at(
     uint32_t new_width,
     uint32_t new_height
 ) {
-    add_error_message_to_queue("Failed to get the pixel of the given image");
     validate_picture_pointer(picture_pointer);
     uint32_t result = get_pixel(picture_pointer, x, y, new_width, new_height);
-    remove_last_error();
     return result;
 }
 
@@ -120,10 +117,7 @@ uint32_t get_pixel_at(
  */
 static void validate_picture_pointer(picture *restrict picture_pointer) {
     if(picture_pointer == NULL) {
-        add_error_message_to_queue(
-            "The picture structure has not been initialized.\n"
-        );
-        print_errors();
+        loge("The picture structure has not been initialized.");
         exit(EXIT_FAILURE);
     }
 }
@@ -172,10 +166,7 @@ static uint32_t get_pixel(
 static uint32_t *init_coordinates_pointer() {
     uint32_t *coordinates_pointer = malloc(sizeof(uint32_t) * 4);
     if(coordinates_pointer == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate sufficient memory for the sum of pixels.\n"
-        );
-        print_errors();
+        loge("Failed to allocate sufficient memory for the sum of pixels.\n");
         exit(EXIT_FAILURE);
     }
     coordinates_pointer[0] = 0;
@@ -195,10 +186,7 @@ static uint32_t *init_coordinates_pointer() {
 static uint64_t *init_pixel_sum_pointer() {
     uint64_t *pixel_sum_pointer = malloc(sizeof(uint64_t) * 4);
     if(pixel_sum_pointer == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate sufficient memory for the sum of pixels.\n"
-        );
-        print_errors();
+        loge("Failed to allocate sufficient memory for the sum of pixels.\n");
         exit(EXIT_FAILURE);
     }
     pixel_sum_pointer[0] = 0;
@@ -511,15 +499,11 @@ static void divide_sum_and_add_to_picture_sum(
  */
 static void validate_coordinates(uint32_t coordinate, uint32_t size) {
     if(size == 0) {
-        add_error_message_to_queue(
-            "The size must be higher than 0, given size is 0.\n"
-        );
-        print_errors();
+        loge("The size must be higher than 0, given size is 0.\n");
         exit(EXIT_FAILURE);
     }
     if(coordinate >= size) {
-        add_error_invalid_coordinates(coordinate, size);
-        print_errors();
+        log_error_invalid_coordinates(coordinate, size);
         exit(EXIT_FAILURE);
     }
 }
@@ -532,7 +516,7 @@ static void validate_coordinates(uint32_t coordinate, uint32_t size) {
  * @param coordinate The coordinate to include in the error message
  * @param size       The size to include in the error message
  */
-static void add_error_invalid_coordinates(uint32_t coordinate, uint32_t size) {
+static void log_error_invalid_coordinates(uint32_t coordinate, uint32_t size) {
     char *message = malloc(sizeof(char) * (46 + 20));
     if(message != NULL) {
         sprintf(
@@ -541,11 +525,10 @@ static void add_error_invalid_coordinates(uint32_t coordinate, uint32_t size) {
             coordinate,
             size
         );
-        add_error_message_to_queue(message);
+        loge(message);
+        free(message);
     } else
-        add_error_message_to_queue(
-            "The given coordinate is higher than the size"
-        );
+        loge("The given coordinate is higher than the size");
 }
 
 /**

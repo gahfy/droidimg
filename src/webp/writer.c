@@ -1,6 +1,6 @@
 #include "writer.h"
 #include "../files/commons.h"
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 #include <webp/encode.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -23,7 +23,7 @@ static void write_webp_picture_to_file(
     WebPConfig *restrict config_pointer,
     WebPPicture *restrict webp_picture_pointer
 );
-static void desallocate_memory_and_remove_error(
+static void desallocate_memory(
     FILE *restrict file_pointer, WebPPicture *restrict webp_picture_pointer
 );
 static void init_webp_config(
@@ -53,13 +53,12 @@ void write_picture_to_webp(
     int height,
     float quality
 ) {
-    add_error_message_to_queue("Failed to write webp image");
     WebPConfig config; WebPPicture webp_picture;
     FILE *file_pointer = open_file(file_path, "wb");
     init_struct(&config, &webp_picture, file_pointer, width, height, quality);
     write_pixels_to_webp_picture(&webp_picture, picture_pointer, width, height);
     write_webp_picture_to_file(&config, &webp_picture);
-    desallocate_memory_and_remove_error(file_pointer, &webp_picture);
+    desallocate_memory(file_pointer, &webp_picture);
 }
 
 /**
@@ -127,8 +126,7 @@ static void write_webp_picture_to_file(
 ) {
     int ok = WebPEncode(config_pointer, webp_picture_pointer);
     if (!ok) {
-        add_error_message_to_queue("Failed to encode webp picture.");
-        print_errors();
+        loge("Failed to encode webp picture.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -139,12 +137,11 @@ static void write_webp_picture_to_file(
  * @param file_pointer         the pointer to the file to close
  * @param webp_picture_pointer the pointer to the webp picture to free
  */
-static void desallocate_memory_and_remove_error(
+static void desallocate_memory(
     FILE *restrict file_pointer, WebPPicture *restrict webp_picture_pointer
 ) {
     fclose(file_pointer);
     WebPPictureFree(webp_picture_pointer);
-    remove_last_error();
 }
 
 /**
@@ -198,8 +195,7 @@ static void init_webp_picture(
 static void validate_webp_config(WebPConfig *restrict config) {
     int config_error = WebPValidateConfig(config);
     if(config_error == 0) {
-        add_error_message_to_queue("Webp provided configuration is not valid.");
-        print_errors();
+        loge("Webp provided configuration is not valid.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -214,8 +210,7 @@ static void init_webp_picture_pointer_or_quit(
     WebPPicture *restrict webp_picture_pointer
 ) {
     if(!WebPPictureInit(webp_picture_pointer)) {
-        add_error_message_to_queue("Failed to initialize webp picture.");
-        print_errors();
+        loge("Failed to initialize webp picture.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -228,10 +223,7 @@ static void init_webp_picture_pointer_or_quit(
  */
 static void allocate_webp_picture(WebPPicture *restrict webp_picture_pointer) {
     if(!WebPPictureAlloc(webp_picture_pointer)) {
-        add_error_message_to_queue(
-            "Failed to allocate memory for the webp picture."
-        );
-        print_errors();
+        loge("Failed to allocate memory for the webp picture.\n");
         exit(EXIT_FAILURE);
     }
 }

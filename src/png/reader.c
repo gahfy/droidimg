@@ -1,7 +1,7 @@
 
 #include "reader.h"
 #include "../../config.h"
-#include "../errors/errors.h"
+#include "../logging/logging.h"
 #include "../files/commons.h"
 #if defined HAVE_LIBPNG && HAVE_LIBPNG == 1
     #include <png.h>
@@ -26,21 +26,17 @@ static picture *read_png_image_from_file_pointer(
 );
 
 picture *read_png_image(char *restrict file_path) {
-    add_error_message_to_queue("Failed to read png image.");
     validate_png_library();
     #if defined HAVE_LIBPNG && HAVE_LIBPNG == 1
         FILE *file_pointer = open_file(file_path, "rb");
         picture *result = read_png_image_from_file_pointer(file_pointer);
         fclose(file_pointer);
-        remove_last_error();
         return result;
     #endif
-    remove_last_error();
     return NULL;
 }
 
 bool is_png_image(char *restrict file_path) {
-    add_error_message_to_queue("Cannot check if file is a png image.");
     FILE *file_pointer = open_file(file_path, "rb");
     uint8_t *file_header = malloc(sizeof(uint8_t) * 8);
     validate_file_header(file_header);
@@ -49,7 +45,6 @@ bool is_png_image(char *restrict file_path) {
     if(size_read < 8)
         return false;
     bool result = is_header_of_png(file_header);
-    remove_last_error();
     return result;
 }
 
@@ -79,10 +74,7 @@ static bool is_header_of_png(uint8_t *restrict file_header) {
  */
 static void validate_file_header(uint8_t *restrict file_header) {
     if(file_header == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate memory to read the header of the file.\n"
-        );
-        print_errors();
+        loge("Failed to allocate memory to read the header of the file.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -104,13 +96,8 @@ static void validate_png_library() {
 * available.
 */
 static void print_png_library_not_found_error_and_exit() {
-    add_error_message_to_queue(
-        "Package has not been compiled with --enable-png option\n"
-    );
-    add_error_message_to_queue(
-        "PNG images are not supported.\n"
-    );
-    print_errors();
+    loge("PNG images are not supported.\n");
+    loge("Caused by: Package has not been compiled with --enable-png option\n");
     exit(EXIT_FAILURE);
 }
 
@@ -298,10 +285,7 @@ static void print_png_library_not_found_error_and_exit() {
      */
     static void validate_png_cache(png_cache *restrict cache) {
         if(cache == NULL) {
-            add_error_message_to_queue(
-                "Failed to allocate memory to read the png image.\n"
-            );
-            print_errors();
+            loge("Failed to allocate memory to read the png image.\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -315,10 +299,7 @@ static void print_png_library_not_found_error_and_exit() {
     static void validate_png_struct_pointer(png_cache *restrict cache) {
         if(!cache->struct_pointer) {
             free_png_cache(cache);
-            add_error_message_to_queue(
-                "Failed to create the png read struct.\n"
-            );
-            print_errors();
+            loge("Failed to create the png read struct.\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -332,10 +313,7 @@ static void print_png_library_not_found_error_and_exit() {
     static void validate_png_info_pointer(png_cache *restrict cache) {
         if(!cache->info_pointer) {
             free_png_cache(cache);
-            add_error_message_to_queue(
-                "Failed to create the png info struct.\n"
-            );
-            print_errors();
+            loge("Failed to create the png info struct.\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -427,10 +405,7 @@ static void print_png_library_not_found_error_and_exit() {
      */    
     static void validate_row_pointer(png_byte *restrict row_pointer) {
         if(row_pointer == NULL) {
-            add_error_message_to_queue(
-                "Failed to allocate memory to store the rows of the image.\n"
-            );
-            print_errors();
+            loge("Failed to allocate memory to store the rows of the image.\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -443,10 +418,9 @@ static void print_png_library_not_found_error_and_exit() {
      */
     static void validate_palette(png_palette *restrict palette) {
         if(palette == NULL) {
-            add_error_message_to_queue(
+            loge(
                 "Failed to allocate memory to store the palette of the image.\n"
             );
-            print_errors();
             exit(EXIT_FAILURE);
         }
     }

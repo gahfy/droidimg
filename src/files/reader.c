@@ -1,6 +1,5 @@
 #include "reader.h"
 #include "commons.h"
-#include "../errors/errors.h"
 #include "../logging/logging.h"
 #include <string.h>
 #include <errno.h>
@@ -17,9 +16,9 @@ static const size_t BUFFER_SIZE = 4096;
  */
 static const size_t READ_ERROR_MESSAGE_LENGTH = 25;
 
-static void add_read_file_error_message(const char *restrict file_path);
+static void log_read_file_error_message(const char *restrict file_path);
 static void reset_file_data(file_data *restrict file_data_pointer);
-static uint8_t *init_buffer();
+static uint8_t *init_buffer(const char *restrict file_path);
 static void set_file_content_in_file_data(
     FILE *restrict file_pointer,
     file_data *restrict file_data_pointer,
@@ -38,10 +37,7 @@ static void realloc_file_data_pointer(
 file_data *init_file_data() {
     file_data *result = malloc(sizeof(file_data));
     if(result == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate sufficient memory to initialize file data.\n"
-        );
-        print_errors();
+        loge("Failed to allocate sufficient memory to initialize file data.\n");
         exit(EXIT_FAILURE);
     }
     result->size = 0;
@@ -62,15 +58,13 @@ void read_file(
     file_data *restrict file_data_pointer,
     const char *restrict file_path
 ) {
-    add_read_file_error_message(file_path);
     reset_file_data(file_data_pointer);
 
     FILE *file_pointer = open_file(file_path, "rb");
-    uint8_t *buffer = init_buffer();
+    uint8_t *buffer = init_buffer(file_path);
     set_file_content_in_file_data(file_pointer, file_data_pointer, buffer);
     free(buffer);
     fclose(file_pointer);
-    remove_last_error();
 }
 
 /**
@@ -78,13 +72,13 @@ void read_file(
  *
  * @param file_path The path of the file that is being read.
  */
-static void add_read_file_error_message(const char *restrict file_path) {
+static void log_read_file_error_message(const char *restrict file_path) {
     char *error_message = malloc(READ_ERROR_MESSAGE_LENGTH + strlen(file_path));
     if(error_message == NULL)
-        add_error_message_to_queue("Failed to read data of file.\n");
+        loge("Failed to read data of file.\n");
     else {
         sprintf(error_message, "Failed to read data of %s\n", file_path);
-        add_error_message_to_queue(error_message);
+        loge(error_message);
         free(error_message);
     }
 }
@@ -114,15 +108,18 @@ static void reset_file_data(file_data *restrict file_data_pointer) {
  * Initializes a buffer and returns its value. The program will end if
  * allocation of the file data failed.
  *
+ * @param file_path the path to the file for which to init the buffer (used to
+ *                  log the error if allocation failed.
+ *
  * @returns the buffer that has been initialized.
  */
-static uint8_t *init_buffer() {
+static uint8_t *init_buffer(const char *restrict file_path) {
     uint8_t *result = malloc(sizeof(uint8_t) * BUFFER_SIZE);
     if(result == NULL) {
-        add_error_message_to_queue(
+        log_read_file_error_message(file_path);
+        loge(
             "Failed to allocate sufficient memory for the file reader buffer.\n"
         );
-        print_errors();
         exit(EXIT_FAILURE);
     }
     return result;
@@ -157,10 +154,7 @@ static void set_file_content_in_file_data(
  */
 static void validate_file_data(file_data *restrict file_data_pointer) {
     if(file_data_pointer == NULL) {
-        add_error_message_to_queue(
-            "The file_data structure has not been initialized.\n"
-        );
-        print_errors();
+        loge("The file_data structure has not been initialized.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -175,10 +169,7 @@ static void validate_file_data(file_data *restrict file_data_pointer) {
 static void reset_file_null_data(file_data *restrict file_data_pointer) {
     file_data_pointer->data_pointer = malloc(sizeof(uint8_t) * 0);
     if(file_data_pointer->data_pointer == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate sufficient memory to read data.\n"
-        );
-        print_errors();
+        loge("Failed to allocate sufficient memory to read data.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -197,10 +188,7 @@ static void reset_file_not_null_data(file_data *restrict file_data_pointer) {
         sizeof(uint8_t) * 0
     );
     if(file_data_pointer->data_pointer == NULL) {
-        add_error_message_to_queue(
-            "Failed to allocate sufficient memory to read data.\n"
-        );
-        print_errors();
+        loge("Failed to allocate sufficient memory to read data.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -245,10 +233,7 @@ static void realloc_file_data_pointer(
         file_data_pointer->size + size_to_add * sizeof(uint8_t)
     );
     if(file_data_pointer->data_pointer == NULL) {
-        add_error_message_to_queue(
-            "Failed to reallocate sufficient memory to read data.\n"
-        );
-        print_errors();
+        loge("Failed to reallocate sufficient memory to read data.\n");
         exit(EXIT_FAILURE);
     }
 }

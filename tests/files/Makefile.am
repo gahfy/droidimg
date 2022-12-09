@@ -26,31 +26,26 @@ check_PROGRAMS += files_write_no_permission_directory
 
 files_read_no_permission_SOURCES = files_read_no_permission.c
 files_read_no_permission_SOURCES += ${SRCDIR}/files/commons.c
-files_read_no_permission_SOURCES += ${SRCDIR}/errors/errors.c
 files_read_no_permission_SOURCES += ${SRCDIR}/utils/string_utils.c
 files_read_no_permission_SOURCES += ${SRCDIR}/logging/logging.c
 
 files_read_not_existing_SOURCES = files_read_not_existing.c
 files_read_not_existing_SOURCES += ${SRCDIR}/files/commons.c
-files_read_not_existing_SOURCES += ${SRCDIR}/errors/errors.c
 files_read_not_existing_SOURCES += ${SRCDIR}/utils/string_utils.c
 files_read_not_existing_SOURCES += ${SRCDIR}/logging/logging.c
 
 files_read_empty_content_SOURCES = files_read_empty_content.c
 files_read_empty_content_SOURCES += ${SRCDIR}/files/commons.c
 files_read_empty_content_SOURCES += ${SRCDIR}/files/reader.c
-files_read_empty_content_SOURCES += ${SRCDIR}/errors/errors.c
 files_read_empty_content_SOURCES += ${SRCDIR}/utils/string_utils.c
 files_read_empty_content_SOURCES += ${SRCDIR}/logging/logging.c
 
 files_write_no_permission_SOURCES = files_write_no_permission.c
 files_write_no_permission_SOURCES += ${SRCDIR}/files/commons.c
-files_write_no_permission_SOURCES += ${SRCDIR}/errors/errors.c
 files_write_no_permission_SOURCES += ${SRCDIR}/utils/string_utils.c
 files_write_no_permission_SOURCES += ${SRCDIR}/logging/logging.c
 
 files_write_no_permission_directory_SOURCES = files_write_no_permission.c
 files_write_no_permission_directory_SOURCES += ${SRCDIR}/files/commons.c
-files_write_no_permission_directory_SOURCES += ${SRCDIR}/errors/errors.c
 files_write_no_permission_directory_SOURCES += ${SRCDIR}/utils/string_utils.c
 files_write_no_permission_directory_SOURCES += ${SRCDIR}/logging/logging.c

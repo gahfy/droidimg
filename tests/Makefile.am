@@ -1,1 +1,1 @@
-SUBDIRS = logging errors files pictures webp png app_tests
+SUBDIRS = logging files pictures webp png app_tests

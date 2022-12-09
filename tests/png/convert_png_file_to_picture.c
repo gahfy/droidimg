@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "../../src/pictures/pictures.h"
 #include "../../src/files/reader.h"
-#include "../../src/errors/errors.h"
 #include "../../src/png/reader.h"
 #include "../../config.h"
 
@@ -18,7 +17,6 @@ int main(int argc, char *argv[]) {
     #elif HAVE_LIBPNG != 1
         return 77;
     #endif
-    init_error_queue();
     uint32_t width = 1129;
     uint32_t height = 638;
     picture *picture_pointer = file_to_picture("img/droidbot.picture", width, height);
@@ -26,7 +24,6 @@ int main(int argc, char *argv[]) {
     compare_pixels(picture_pointer, png_picture);
     free_picture(picture_pointer);
     free_picture(png_picture);
-    free_error_queue();
     return EXIT_SUCCESS;
 }
 
