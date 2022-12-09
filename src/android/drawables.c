@@ -1,6 +1,7 @@
 #include "drawables.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "../config.h"
 #if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
     #include <pthread.h>
 #endif
@@ -47,12 +48,11 @@ static void validate_destination_folder(char *restrict destination_folder);
 static void set_destination_folder(
     char *restrict destination_folder,
     char *restrict output_folder,
-    char *restrict drawable_folder,
-    int destination_length
+    char *restrict drawable_folder
 );
 
 static void write_android_drawable(
-    char *restrict folder,
+    char *restrict destination_folder,
     picture *restrict picture_pointer,
     drawable_config *restrict config,
     drawable_res resolution
@@ -60,9 +60,7 @@ static void write_android_drawable(
 
 static uint32_t get_drawable_size(uint32_t mdpi_size, drawable_res resolution);
 
-static char *get_file_path(
-    char *restrict folder, char *restrict name, int file_path_length
-);
+static char *get_file_path(char *restrict folder, char *restrict name);
 
 static void validate_file_path(char *restrict file_path);
 
@@ -295,9 +293,7 @@ static char *get_and_create_destination_folder(
     int destination_length = output_folder_length + drawable_folder_length;
     char *destination_folder = malloc(sizeof(char) * (destination_length + 1));
     validate_destination_folder(destination_folder);
-    set_destination_folder(
-        destination_folder, output_folder, drawable_folder, destination_length
-    );
+    set_destination_folder(destination_folder, output_folder, drawable_folder);
     destination_folder[destination_length] = 0x00;
     create_directory_if_not_exists(destination_folder);
     return destination_folder;
@@ -313,32 +309,31 @@ static void validate_destination_folder(char *restrict destination_folder) {
 static void set_destination_folder(
     char *restrict destination_folder,
     char *restrict output_folder,
-    char *restrict drawable_folder,
-    int destination_length
+    char *restrict drawable_folder
 ) {
     int output_folder_length = strlen(output_folder);
     int drawable_folder_length = strlen(drawable_folder);
-    strncpy(destination_folder, output_folder, destination_length);
-    strncpy(
+    int destination_length = output_folder_length + drawable_folder_length;
+    memcpy(destination_folder, output_folder, output_folder_length);
+    memcpy(
         &destination_folder[output_folder_length],
         drawable_folder,
-        destination_length - output_folder_length
+        drawable_folder_length
     );
 }
 
 static void write_android_drawable(
-    char *restrict folder,
+    char *restrict destination_folder,
     picture *restrict picture_pointer,
     drawable_config *restrict config,
     drawable_res resolution
 ) {
     uint32_t width = get_drawable_size(config->width, resolution);
     uint32_t height = get_drawable_size(config->height, resolution);
-    char *file_path = get_file_path(
-        folder, config->name, strlen(folder) + strlen(config->name) + 1
+    char *file_path = get_file_path(destination_folder, config->name);
+    write_picture_to_webp(
+        picture_pointer, file_path, width, height, config->quality
     );
-    float quality = config->quality;
-    write_picture_to_webp(picture_pointer, file_path, width, height, quality);
     free(file_path);
 }
 
@@ -353,17 +348,15 @@ static uint32_t get_drawable_size(uint32_t mdpi_size, drawable_res resolution) {
     }
 }
 
-static char *get_file_path(
-    char *restrict folder, char *restrict name, int file_path_length
-) {
+static char *get_file_path(char *restrict folder, char *restrict name) {
     int folder_length = strlen(folder);
     int name_length = strlen(name);
+    int file_path_length = folder_length + name_length + 1;
     char *file_path = malloc(file_path_length+1);
     validate_file_path(file_path);
-    strncpy(file_path, folder, file_path_length);
+    memcpy(file_path, folder, folder_length);
     file_path[folder_length] = '/';
-    int length_to_copy = file_path_length - folder_length - 1;
-    strncpy(&file_path[folder_length + 1], name, length_to_copy);
+    memcpy(&file_path[folder_length + 1], name, name_length);
     file_path[file_path_length] = 0x00;
     return file_path;
 }
