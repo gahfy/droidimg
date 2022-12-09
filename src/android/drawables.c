@@ -52,7 +52,7 @@ static void set_destination_folder(
 );
 
 static void write_android_drawable(
-    char *restrict destination_folder,
+    char *restrict folder,
     picture *restrict picture_pointer,
     drawable_config *restrict config,
     drawable_res resolution
@@ -327,7 +327,7 @@ static void set_destination_folder(
 }
 
 static void write_android_drawable(
-    char *restrict destination_folder,
+    char *restrict folder,
     picture *restrict picture_pointer,
     drawable_config *restrict config,
     drawable_res resolution
@@ -335,7 +335,7 @@ static void write_android_drawable(
     uint32_t width = get_drawable_size(config->width, resolution);
     uint32_t height = get_drawable_size(config->height, resolution);
     char *file_path = get_file_path(
-        destination_folder, config->name, strlen(folder) + strlen(name) + 1
+        folder, config->name, strlen(folder) + strlen(config->name) + 1
     );
     float quality = config->quality;
     write_picture_to_webp(picture_pointer, file_path, width, height, quality);
