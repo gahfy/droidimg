@@ -1,6 +1,5 @@
 #include "drawables.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include "../config.h"
 #if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
     #include <pthread.h>
@@ -171,7 +170,6 @@ static thread_arg *init_thread_arguments(
 }
 
 static void *write_ldpi(void *args) {
-    printf("Start ldpi\n");
     thread_arg *arguments = (thread_arg *) args;
     char *destination_folder = get_and_create_destination_folder(
         arguments->output_folder, "drawable-ldpi"
@@ -183,12 +181,10 @@ static void *write_ldpi(void *args) {
         ldpi
     );
     free(destination_folder);
-    printf("Ended ldpi\n");
     return NULL;
 }
 
 static void *write_mdpi(void *args) {
-    printf("Start mdpi\n");
     thread_arg *arguments = (thread_arg *) args;
     char *destination_folder = get_and_create_destination_folder(
         arguments->output_folder, "drawable-mdpi"
@@ -200,12 +196,10 @@ static void *write_mdpi(void *args) {
         mdpi
     );
     free(destination_folder);
-    printf("Ended mdpi\n");
     return NULL;
 }
 
 static void *write_hdpi(void *args) {
-    printf("Start hdpi\n");
     thread_arg *arguments = (thread_arg *) args;
     char *destination_folder = get_and_create_destination_folder(
         arguments->output_folder, "drawable-hdpi"
@@ -217,12 +211,10 @@ static void *write_hdpi(void *args) {
         hdpi
     );
     free(destination_folder);
-    printf("Ended hdpi\n");
     return NULL;
 }
 
 static void *write_xhdpi(void *args) {
-    printf("Start xhdpi\n");
     thread_arg *arguments = (thread_arg *) args;
     char *destination_folder = get_and_create_destination_folder(
         arguments->output_folder, "drawable-xhdpi"
@@ -234,12 +226,10 @@ static void *write_xhdpi(void *args) {
         xhdpi
     );
     free(destination_folder);
-    printf("Ended xhdpi\n");
     return NULL;
 }
 
 static void *write_xxhdpi(void *args) {
-    printf("Start xxhdpi\n");
     thread_arg *arguments = (thread_arg *) args;
     char *destination_folder = get_and_create_destination_folder(
         arguments->output_folder, "drawable-xxhdpi"
@@ -251,12 +241,10 @@ static void *write_xxhdpi(void *args) {
         xxhdpi
     );
     free(destination_folder);
-    printf("Ended xxhdpi\n");
     return NULL;
 }
 
 static void *write_xxxhdpi(void *args) {
-    printf("Start xxxhdpi\n");
     thread_arg *arguments = (thread_arg *) args;
     char *destination_folder = get_and_create_destination_folder(
         arguments->output_folder, "drawable-xxxhdpi"
@@ -268,7 +256,6 @@ static void *write_xxxhdpi(void *args) {
         xxxhdpi
     );
     free(destination_folder);
-    printf("Ended xxxhdpi\n");
     return NULL;
 }
 
@@ -351,12 +338,13 @@ static uint32_t get_drawable_size(uint32_t mdpi_size, drawable_res resolution) {
 static char *get_file_path(char *restrict folder, char *restrict name) {
     int folder_length = strlen(folder);
     int name_length = strlen(name);
-    int file_path_length = folder_length + name_length + 1;
+    int file_path_length = folder_length + name_length + 6;
     char *file_path = malloc(file_path_length+1);
     validate_file_path(file_path);
     memcpy(file_path, folder, folder_length);
     file_path[folder_length] = '/';
     memcpy(&file_path[folder_length + 1], name, name_length);
+    memcpy(&file_path[folder_length + 1 + name_length], ".webp", 5);
     file_path[file_path_length] = 0x00;
     return file_path;
 }
