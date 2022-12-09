@@ -1,7 +1,5 @@
 bin_PROGRAMS = droidimg
-droidimg_SOURCES = utils/android_utils.c
-droidimg_SOURCES += utils/android_utils.h
-droidimg_SOURCES += utils/config_utils.c
+droidimg_SOURCES = utils/config_utils.c
 droidimg_SOURCES += utils/config_utils.h
 droidimg_SOURCES += utils/constants.h
 droidimg_SOURCES += utils/memory_utils.c

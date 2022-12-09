@@ -16,7 +16,6 @@
 #include "utils/memory_utils.h"
 #include "utils/string_utils.h"
 #include "utils/constants.h"
-#include "utils/android_utils.h"
 #include "utils/config_utils.h"
 #include "logging/logging.h"
 #include "android/drawables.h"
