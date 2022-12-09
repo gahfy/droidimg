@@ -9,7 +9,6 @@
 #ifndef _WIN32
 #include <pwd.h>
 #endif
-#include "string_utils.h"
 #include "../logging/logging.h"
 
 static const char* destination_prefix = "destination.";

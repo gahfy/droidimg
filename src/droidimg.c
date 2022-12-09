@@ -14,7 +14,6 @@
 #include "webp/reader.h"
 #include "webp/writer.h"
 #include "pictures/pictures.h"
-#include "utils/string_utils.h"
 #include "utils/config_utils.h"
 #include "logging/logging.h"
 #include "android/drawables.h"
@@ -39,6 +38,42 @@ static void usage() {
     printf("                [-h|--height <height_in_dp>]\n");
     printf("                [-d|--destination <destination_from_config>]\n");
     printf("                [-e|--exclude <l,m,h,x,xx,xxx>]\n");
+}
+
+static uint32_t get_uint32_arg(char *argument) {
+    char *end;
+    unsigned long result = strtoul(argument, &end, 10);
+    if(end[0] != 0x00 || result > UINT32_MAX) {
+        return UINT32_MAX;
+    }
+    return (uint32_t) result;
+}
+
+static int get_last_slash(char *restrict string) {
+    char slash = '/';
+    char slash2 = '/';
+    #ifdef _WIN32
+        char slash2 = '\\';
+    #endif
+    int current_index = 0;
+    int result = -1;
+    while(string[current_index] != 0x00) {
+        if(string[current_index] == slash || string[current_index] == slash2)
+            result = current_index;
+        current_index++;
+    }
+    return result;
+}
+
+static int get_last_point(char *restrict string, int start_index) {
+    int current_index = start_index;
+    int result = -1;
+    while(string[current_index] != 0x00) {
+        if(string[current_index] == '.')
+            result = current_index;
+        current_index++;
+    }
+    return result;
 }
 
 static void validate_output_folder() {
@@ -88,7 +123,7 @@ static void parse_width(int argc, char *argv[], int *index) {
     if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--width") * strcmp(argv[index[0]], "-w") == 0) {
-        width = string_to_uint32(argv[index[0]+1]);
+        width = get_uint32_arg(argv[index[0]+1]);
         index[0] += 2;
     }
 }
@@ -97,7 +132,7 @@ static void parse_height(int argc, char *argv[], int *index) {
     if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--height") * strcmp(argv[index[0]], "-h") == 0) {
-        height = string_to_uint32(argv[index[0]+1]);
+        height = get_uint32_arg(argv[index[0]+1]);
         index[0] += 2;
     }
 }
@@ -237,8 +272,8 @@ static void set_output_folder_value() {
     if(output_folder == NULL) {
         set_output_folder_from_destination();
     }
-    if(   get_last_character(output_folder) != '/'
-        && get_last_character(output_folder) != '\\') {
+    if(   output_folder[strlen(output_folder) - 1] != '/'
+        && output_folder[strlen(output_folder) - 1] != '\\') {
         #ifdef _WIN32
             char char_to_add = '\\';
         #else
@@ -255,13 +290,9 @@ static void set_output_folder_value() {
 
 static void set_name_from_input_file() {
     if(name == NULL) {
-        int start_index = get_last_index(input_file, '/', 0);
-#ifdef _WIN32
-        if(start_index == -1)
-            get_last_index(input_file, '\\', 0);
-#endif
+        int start_index = get_last_slash(input_file);
         start_index = start_index == -1 ? 0 : start_index + 1;
-        int end_index = get_last_index(input_file, '.', start_index);
+        int end_index = get_last_point(input_file, start_index);
         if (end_index == -1)
             end_index = strlen(input_file) - 1;
 
