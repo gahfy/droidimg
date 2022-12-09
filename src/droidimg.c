@@ -13,9 +13,7 @@
 #include "webp/reader.h"
 #include "webp/writer.h"
 #include "pictures/pictures.h"
-#include "utils/memory_utils.h"
 #include "utils/string_utils.h"
-#include "utils/constants.h"
 #include "utils/config_utils.h"
 #include "logging/logging.h"
 #include "android/drawables.h"
@@ -42,8 +40,19 @@ static void usage() {
     printf("                [-e|--exclude <l,m,h,x,xx,xxx>]\n");
 }
 
+static void validate_output_folder() {
+    if(output_folder == NULL) {
+        loge("Failed to allocate memory for output folder argument.\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 static void parse_input_file(int argc, char *argv[], int *index) {
-    input_file = allocate(sizeof(char) * (strlen(argv[index[0]]) + 1));
+    input_file = malloc(sizeof(char) * (strlen(argv[index[0]]) + 1));
+    if(input_file == NULL) {
+        loge("Failed to allocate memory for input file argument.\n");
+        exit(EXIT_FAILURE);
+    }
     copy_string(input_file, argv[index[0]], strlen(argv[index[0]]));
     index[0]++;
 }
@@ -53,7 +62,8 @@ static void parse_output_folder(int argc, char *argv[], int *index) {
         return;
     if(strcmp(argv[index[0]], "--output") * strcmp(argv[index[0]], "-o") == 0) {
         // +2 because we may add a final / or \ at the end of the name
-        output_folder = allocate(sizeof(char) * (strlen(argv[index[0]+1]) + 2));
+        output_folder = malloc(sizeof(char) * (strlen(argv[index[0]+1]) + 2));
+        validate_output_folder();
         copy_string(output_folder, argv[index[0]+1], strlen(argv[index[0]+1]));
         index[0] += 2;
     }
@@ -63,7 +73,11 @@ static void parse_name(int argc, char *argv[], int *index) {
     if(index[0] >= argc-1)
         return;
     if(strcmp(argv[index[0]], "--name") * strcmp(argv[index[0]], "-n") == 0) {
-        name = allocate(sizeof(char) * (strlen(argv[index[0]+1]) + 1));
+        name = malloc(sizeof(char) * (strlen(argv[index[0]+1]) + 1));
+        if(name == NULL) {
+            loge("Failed to allocate memory for name argument.\n");
+            exit(EXIT_FAILURE);
+        }
         copy_string(name, argv[index[0]+1], strlen(argv[index[0]+1]));
         index[0] += 2;
     }
@@ -94,7 +108,11 @@ static void parse_destination(int argc, char *argv[], int *index) {
           strcmp(argv[index[0]], "--destination")
         * strcmp(argv[index[0]], "-d") == 0
     ) {
-        destination = allocate(sizeof(char) * (strlen(argv[index[0]+1]) + 1));
+        destination = malloc(sizeof(char) * (strlen(argv[index[0]+1]) + 1));
+        if(destination == NULL) {
+            loge("Failed to allocate memory for destination argument.\n");
+            exit(EXIT_FAILURE);
+        }
         copy_string(destination, argv[index[0]+1], strlen(argv[index[0]+1]));
         index[0] += 2;
     }
@@ -164,7 +182,7 @@ static void parse_exclude(int argc, char *argv[], int *index) {
                 current += (argv[index[0]+1][current+3] == 0x00) ? 3 : 4;
             } else {
                 usage();
-                exit(ERROR_CODE_ARGUMENTS);
+                exit(EXIT_FAILURE);
             }
         }
         index[0] += 2;
@@ -186,24 +204,29 @@ static void parse_arguments(int argc, char *argv[]) {
         }
         if(index == previous_index) {
             usage();
-            exit(ERROR_CODE_ARGUMENTS);
+            exit(EXIT_FAILURE);
         }
         previous_index = index;
     }
 }
 
+static void set_output_folder_from_null_destination() {
+    output_folder = malloc(3 * sizeof(char));
+    validate_output_folder();
+    sprintf(output_folder, "./");
+}
+
 static void set_output_folder_from_destination() {
     if(destination == NULL) {
-        output_folder = allocate(3 * sizeof(char));
-        sprintf(output_folder, "./");
+        set_output_folder_from_null_destination();
     } else {
         // Allocate the max length of a folder
-        output_folder = allocate(sizeof(char) * 4097);
+        output_folder = malloc(sizeof(char) * 4097);
+        validate_output_folder();
         set_destination(destination, output_folder);
         if(output_folder[0] == 0x00) {
             free(output_folder);
-            output_folder = allocate(3 * sizeof(char));
-            sprintf(output_folder, "./");
+            set_output_folder_from_null_destination();
         }
         free(destination);
     }
@@ -242,7 +265,11 @@ static void set_name_from_input_file() {
             end_index = strlen(input_file) - 1;
 
         int length = end_index - start_index;
-        name = allocate(sizeof(char) * (length + 1));
+        name = malloc(sizeof(char) * (length + 1));
+        if(name == NULL) {
+            loge("Failed to allocate memory for name argument.\n");
+            exit(EXIT_FAILURE);
+        }
         copy_string(name, &input_file[start_index], length);
     }
 }
@@ -256,16 +283,16 @@ static void set_width_and_height(picture *picture) {
             uint64_t result = ((uint64_t) picture->width) * (uint64_t) height;
             result /= (uint64_t) picture->height;
             if(result > UINT32_MAX / 4) {
-                fprintf(stderr, ERROR_MESSAGE_ARGUMENTS);
-                exit(ERROR_CODE_ARGUMENTS);
+                loge("Wrong width and/or height passed to program.\n");
+                exit(EXIT_FAILURE);
             }
             width = (uint32_t) result;
         } else if(height == UINT32_MAX) {
             uint64_t result = ((uint64_t) picture->height) * (uint64_t) width;
             result /= (uint64_t) picture->width;
             if(result > UINT32_MAX / 4) {
-                fprintf(stderr, ERROR_MESSAGE_ARGUMENTS);
-                exit(ERROR_CODE_ARGUMENTS);
+                loge("Wrong width and/or height passed to program.\n");
+                exit(EXIT_FAILURE);
             }
             height = (uint32_t) result;;
         }
@@ -280,8 +307,8 @@ static void validate_arguments() {
         (width != UINT32_MAX && width > UINT32_MAX / 4) ||
         (height != UINT32_MAX && height > UINT32_MAX / 4)
     ) {
-        fprintf(stderr, ERROR_MESSAGE_ARGUMENTS);
-        exit(ERROR_CODE_ARGUMENTS);
+        loge("Wrong arguments passed to program.\n");
+        exit(EXIT_FAILURE);
     }
 }
 

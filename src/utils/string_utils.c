@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <stddef.h>
 #include "string_utils.h"
-#include "constants.h"
 
 uint32_t string_to_uint32(char *string) {
     char *end;

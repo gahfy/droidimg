@@ -10,7 +10,7 @@
 #include <pwd.h>
 #endif
 #include "string_utils.h"
-#include "memory_utils.h"
+#include "../logging/logging.h"
 
 static const char* destination_prefix = "destination.";
 
@@ -77,7 +77,11 @@ static void parse_current_char(
 void set_destination(char *destination_name, char* folder) {
 #ifdef _WIN32
     size_t pointer_size = sizeof(char) * (strlen(getenv("USERPROFILE")) + 18);
-    char *user_config_file_path = allocate(pointer_size);
+    char *user_config_file_path = malloc(pointer_size);
+    if(user_config_file_path == NULL) {
+        loge("Failed to allocate memory for destination config file path");
+        exit(EXIT_FAILURE);
+    }
     sprintf(
         user_config_file_path,
         "%s/.droidimg.config",
@@ -87,7 +91,11 @@ void set_destination(char *destination_name, char* folder) {
 #else
     struct passwd *pw = getpwuid(getuid());
     size_t pointer_size = sizeof(char) * (strlen(pw->pw_dir) + 18);
-    char *user_config_file_path = allocate(pointer_size);
+    char *user_config_file_path = malloc(pointer_size);
+    if(user_config_file_path == NULL) {
+        loge("Failed to allocate memory for destination config file path");
+        exit(EXIT_FAILURE);
+    }
     sprintf(user_config_file_path, "%s/.droidimg.config", pw->pw_dir);
     free(pw);
 #endif
@@ -107,7 +115,11 @@ void set_destination(char *destination_name, char* folder) {
     int destination_index = 0;
     bool is_still_good = true;
     bool is_finished = false;
-    char *current = allocate(sizeof(char) * 2);
+    char *current = malloc(sizeof(char) * 2);
+    if(current == NULL) {
+        loge("Failed to allocate memory for destination buffer");
+        exit(EXIT_FAILURE);
+    }
     while(fgets(current, sizeof(char) * 2, file_pointer) && !is_finished) {
         parse_current_char(
             current[0],
