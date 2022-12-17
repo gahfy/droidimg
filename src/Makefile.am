@@ -1,6 +1,6 @@
 bin_PROGRAMS = droidimg
-droidimg_SOURCES = utils/config_utils.c
-droidimg_SOURCES += utils/config_utils.h
+droidimg_SOURCES = config/reader.c
+droidimg_SOURCES += config/reader.h
 droidimg_SOURCES += files/writer.c
 droidimg_SOURCES += files/writer.h
 droidimg_SOURCES += android/drawables.c

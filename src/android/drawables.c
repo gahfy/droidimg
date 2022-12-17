@@ -1,6 +1,6 @@
 #include "drawables.h"
 #include <stdlib.h>
-#include "../config.h"
+#include "../../config.h"
 #if defined HAVE_LIBPTHREAD && HAVE_LIBPTHREAD == 1
     #include <pthread.h>
 #endif

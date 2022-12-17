@@ -90,9 +90,8 @@ picture *init_picture(uint32_t width, uint32_t height) {
 
 void free_picture(picture *restrict picture_pointer) {
     if(picture_pointer != NULL) {
-        if(picture_pointer->argb_pixels != NULL) {
+        if(picture_pointer->argb_pixels != NULL)
             free(picture_pointer->argb_pixels);
-        }
         free(picture_pointer);
     }
 }
