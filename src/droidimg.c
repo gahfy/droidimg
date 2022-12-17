@@ -326,14 +326,14 @@ static void set_output_folder_from_non_null_destination(
 ) {
     char *config_folder = get_config_folder(destination);
     if(config_folder[0] == 0x00) {
-        //free(args->output_folder);
+        free(args->output_folder);
         set_output_folder_from_null_destination(args);
     } else {
         args->output_folder = malloc(sizeof(char) * (strlen(config_folder)+1));
         validate_output_folder(args);
         memcpy(args->output_folder, config_folder, strlen(config_folder) + 1);
     }
-    //free(config_folder);
+    free(config_folder);
 }
 
 static void set_output_folder_from_destination(arguments *args) {
@@ -341,7 +341,7 @@ static void set_output_folder_from_destination(arguments *args) {
         set_output_folder_from_null_destination(args);
     } else {
         set_output_folder_from_non_null_destination(destination, args);
-        //free(destination);
+        free(destination);
     }
 }
 
@@ -440,20 +440,24 @@ static arguments *init_arguments() {
         loge("Failed to allocate memory for arguments structure.\n");
         exit(EXIT_FAILURE);
     }
+    result->output_folder = NULL;
+    result->input_file = NULL;
+    result->destination = NULL;
+    result->name = NULL;
     return result;
 }
 
 static void free_arguments(arguments *restrict args) {
     if(args != NULL) {
-        //if(args->input_file != NULL)
-            //free(args->input_file);
-        //if(args->output_folder != NULL)
-            //free(args->output_folder);
-        //if(args->destination != NULL)
-            //free(args->destination);
-        //if(args->name != NULL)
-            //free(args->name);
-        //free(args);
+        if(args->input_file != NULL)
+            free(args->input_file);
+        if(args->output_folder != NULL)
+            free(args->output_folder);
+        if(args->destination != NULL)
+            free(args->destination);
+        if(args->name != NULL)
+            free(args->name);
+        free(args);
     }
 }
 
@@ -472,7 +476,7 @@ int main(int argc, char *argv[]) {
         loge("Cannot determine input file format.");
         exit(EXIT_FAILURE);
     }
-    //free(input_file);
+    free(input_file);
     set_width_and_height(picture_pointer);
     drawable_config *config = malloc(sizeof(drawable_config));
     config->quality = 100.0;
@@ -489,8 +493,8 @@ int main(int argc, char *argv[]) {
     write_android_drawables(picture_pointer, args->output_folder, config);
 
 
-    //free(config);
-    //free_arguments(args);
-    //free_picture(picture_pointer);
+    free(config);
+    free_arguments(args);
+    free_picture(picture_pointer);
     return EXIT_SUCCESS;
 }
